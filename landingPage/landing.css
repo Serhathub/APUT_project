@@ -1,0 +1,252 @@
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 70px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: url("Assets/fifaAchtergrond.png") no-repeat center center;
+  background-size: cover;
+  filter: blur(5px);
+  z-index: -1;
+}
+
+body.modal-open {
+  padding-right: 0 !important;
+}
+
+.navbar-custom {
+  background-color: #07F468;
+}
+
+.placeholder {
+  width: 30px;
+  background-color: #07F468;
+}
+
+.navbar-brand-custom {
+  color: #000;
+  font-weight: bold;
+  font-size: 2rem;
+  cursor: default;
+}
+
+.user-icon-btn {
+  font-size: 2rem;
+  border: none;
+  background: none;
+  color: #000;
+}
+
+.dropdown-item {
+  font-size: 1.2rem;
+}
+
+.dropdown-toggle::after {
+  display: none;
+}
+
+.content-container {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.game-box {
+  width: 70%;
+  max-width: 1000px;
+  min-height: 60vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.game-header {
+  font-size: 1.75rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1rem;
+}
+
+.game-option {
+  height: 100px;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  font-size: 1.2rem;
+  transition: background-color 0.3s;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  margin: 5px;
+}
+
+.game-img {
+  width: 80px;
+  height: auto;
+}
+
+.game-img-large {
+  width: 110px;
+}
+
+.game-img-small {
+  width: 55px;
+}
+
+.game-text {
+  font-size: 1.2rem;
+  font-weight: bold;
+}
+
+.game-option:hover {
+  background-color: #f0f0f0;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 5px;
+  position: relative;
+  text-align: center;
+  max-width: 300px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.popup p {
+  margin-top: 20px;
+}
+
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+}
+
+.modal-body input[readonly] {
+  background-color: #e9e9e9 !important;
+  border: 1px solid #ccc;
+  color: #555;
+}
+
+.modal-body input:not([readonly]) {
+  background-color: #fff;
+  border: 1px solid #07F468;
+}
+
+#saveProfileBtn {
+  background-color: #07F468;
+  border: none;
+  color: #000;
+}
+
+#saveProfileBtn:hover {
+  background-color: #06c15e;
+}
+
+#cancelProfileBtn {
+  background-color: #dc3545;
+  border: none;
+  color: #000;
+}
+
+#cancelProfileBtn:hover {
+  background-color: #c82333;
+}
+
+/* --- Mobile --- */
+@media (max-width: 768px) {
+  .row > div {
+    flex: 0 0 100%;
+    max-width: 100%;
+  }
+  
+  .game-box {
+    width: 95%;
+    max-width: 100%;
+    max-height: 90vh;
+    overflow-y: auto;
+    padding: 8px;
+    margin: 0 auto;
+  }
+  
+  .game-header {
+    font-size: 1.7rem;
+    margin-bottom: 0.5rem;
+  }
+  
+  .game-option {
+    height: auto;
+    font-size: 0.9rem;
+    padding: 5px 8px;
+    gap: 5px;
+    margin: 3px 0;
+  }
+  
+  .game-img {
+    width: 40px;
+  }
+  
+  .game-img-large {
+    width: 55px;
+  }
+  
+  .game-img-small {
+    width: 35px;
+  }
+  
+  .game-text {
+    font-size: 1.5rem;
+  }
+  
+  .dropdown-item {
+    font-size: 1.5rem;
+    padding: 10px 20px;
+  }
+
+  .modal-title {
+    font-size: 1.8rem;
+  }
+  
+  .modal-body label {
+    font-size: 1.5rem;
+  }
+  
+  .modal-body .form-control {
+    font-size: 1.5rem;
+  }
+  .modal-footer button {
+    font-size: 1.3rem;
+    padding: 0.75rem 1.5rem;
+  }
+}
