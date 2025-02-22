@@ -1,0 +1,163 @@
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 70px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: url("Assets/fifaAchtergrond.png") no-repeat center center;
+  background-size: cover;
+  filter: blur(5px);
+  z-index: -1;
+}
+
+.navbar-custom {
+  background-color: #07F468;
+}
+
+.navbar-brand-custom {
+  color: #000;
+  font-weight: bold;
+  font-size: 2rem;
+  cursor: default;
+}
+
+.content-container {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.login-box {
+  width: 70%;
+  max-width: 500px;
+  min-height: 40vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.club-photo {
+  width: 80%;
+  margin: 0 auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 5px;
+}
+
+.welcome-title {
+  font-size: 2rem;
+  font-weight: bold;
+}
+
+.title-divider {
+  width: 95%;
+  margin: 0 auto;
+  border: 1px solid #000;
+}
+
+.login-btn {
+  background-color: #07F468;
+  color: #000;
+  border: none;
+  font-weight: bold;
+}
+
+.login-btn:hover {
+  background-color: #06c15e;
+}
+
+.forgot-password {
+  color: #07F468;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
+  color: #06c15e;
+}
+
+.popup-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0,0,0,0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  z-index: 9999;
+}
+
+.popup {
+  background: #fff;
+  padding: 20px 30px;
+  border-radius: 5px;
+  position: relative;
+  text-align: center;
+  max-width: 300px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+.popup p {
+  margin-top: 20px;
+}
+
+.popup-close {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #333;
+}
+
+.register-container {
+  font-size: 1.1rem;
+  margin-top: 20px;
+}
+
+.register-link {
+  color: #07F468;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.register-link:hover {
+  color: #06c15e;
+  text-decoration: underline;
+}
+
+@media (max-width: 768px) {
+  .content-container {
+    padding: 10px;
+  }
+  .login-box {
+    width: 95%;
+    max-width: 95%;
+  }
+  .navbar-brand-custom {
+    font-size: 1.8rem;
+  }
+  .title-divider {
+    width: 70%;
+  }
+  .login-btn {
+    font-size: 1rem;
+  }
+}
