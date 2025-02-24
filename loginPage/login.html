@@ -59,7 +59,7 @@
       </form>
 
       <div class="text-center mt-3">
-        <a href="#" id="forgot-password-link" class="forgot-password">Wachtwoord vergeten?</a>
+        <a href="#" id="forgot-password-link" class="forgot-password" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">Wachtwoord vergeten?</a>
       </div>
 
       <div class="text-center mt-4 register-container">
@@ -68,10 +68,25 @@
     </div>
   </div>
 
-  <div id="forgotPopup" class="popup-overlay">
-    <div class="popup">
-      <button class="popup-close" id="forgotPopupClose">&times;</button>
-      <p>Soon Come</p>
+  <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="resetPasswordModalLabel">Wachtwoord Reset</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Sluiten"></button>
+        </div>
+        <div class="modal-body">
+          <form id="resetPasswordForm">
+            <div class="mb-3">
+              <label for="resetEmail" class="form-label">Voer je e-mailadres in:</label>
+              <input type="email" class="form-control" id="resetEmail" placeholder="jouw@example.com" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn reset-btn">Wachtwoord resetten</button>
+        </div>
+      </div>
     </div>
   </div>
 

@@ -143,6 +143,21 @@ body::before {
   text-decoration: underline;
 }
 
+body.modal-open {
+  padding-right: 0 !important;
+}
+
+.reset-btn {
+  background-color: #07F468;
+  border: none;
+  color: #000;
+  font-weight: bold;
+}
+
+.reset-btn:hover {
+  background-color: #06c15e;
+}
+
 @media (max-width: 768px) {
   .content-container {
     padding: 10px;
@@ -157,7 +172,21 @@ body::before {
   .title-divider {
     width: 70%;
   }
+  
+  .form-label {
+    font-size: 1.3rem;
+  }
+
+  .form-control {
+    font-size: 1.2rem;
+  }
+
+  .forgot-password,
+  .register-container {
+    font-size: 1.3rem;
+  }
+
   .login-btn {
-    font-size: 1rem;
+    font-size: 1.3rem;
   }
 }
