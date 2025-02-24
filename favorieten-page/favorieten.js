@@ -15,7 +15,7 @@ document.addEventListener("DOMContentLoaded", function () {
             barcelona: {
                 name: "FC Barcelona",
                 logo: "assets/FC_BARCELONA_LOGO.png",
-                yearFounded: 1899,
+                oprichting: 1899,
                 coach: "Xavi Hernández",
                 league: "La Liga",
                 squad: [
@@ -23,36 +23,40 @@ document.addEventListener("DOMContentLoaded", function () {
                     "Frenkie de Jong", "Gavi", "Pedri", "Robert Lewandowski", "Ansu Fati", "Lamine Yamal"
                 ],
                 stadium: "Camp Nou",
+                stadiumImage: "./assets/Barcelona_Stadium.jpg",
                 country: "Spanje"
             },
             psg: {
                 name: "Paris Saint-Germain",
                 logo: "assets/PSG_LOGO.png",
-                yearFounded: 1970,
+                oprichting: 1970,
                 coach: "Christophe Galtier",
                 league: "Ligue 1",
                 squad: ["Donnarumma", "Hakimi", "Marquinhos", "Ramos", "Nuno Mendes", "Verratti", "Vitinha", "Ruiz", "Mbappé", "Neymar", "Messi"],
                 stadium: "Parc des Princes",
+                stadiumImage: "./assets/PSG_Stadium.jpg",
                 country: "Frankrijk"
             },
             realmadrid: {
                 name: "Real Madrid",
                 logo: "assets/REALMADRID_LOGO.png",
-                yearFounded: 1902,
+                oprichting: 1902,
                 coach: "Carlo Ancelotti",
                 league: "La Liga",
                 squad: ["Courtois", "Carvajal", "Militão", "Alaba", "Mendy", "Modric", "Tchouaméni", "Kroos", "Vinicius Jr", "Benzema", "Rodrygo"],
                 stadium: "Santiago Bernabéu",
+                stadiumImage: "./assets/RealMadrid_Stadium.jpg",
                 country: "Spanje"
             },
             arsenal: {
                 name: "Arsenal",
                 logo: "assets/ARSENAL_LOGO.png",
-                yearFounded: 1886,
+                oprichting: 1886,
                 coach: "Mikel Arteta",
                 league: "Premier League",
                 squad: ["Ramsdale", "White", "Saliba", "Gabriel", "Zinchenko", "Partey", "Odegaard", "Xhaka", "Saka", "Jesus", "Martinelli"],
                 stadium: "Emirates Stadium",
+                stadiumImage: "./assets/Arsenal_Stadium.jpg",
                 country: "Engeland"
             }
         };
@@ -63,28 +67,36 @@ document.addEventListener("DOMContentLoaded", function () {
             const seenCount = document.getElementById(`count-${club}`).innerText;
 
             clubContent.innerHTML = `
-                <div class="club-detail-box p-3" style="background-color: #07F468; border-radius: 10px;">
-                    <div class="d-flex justify-content-between">
+                <div class="club-detail-box">
+                    <div class="club-header">
                         <div>
                             <p>Aantal keer LIVE gezien:</p>
                             <h3 id="detail-seen-count">${seenCount}</h3> 
                             <button class="btn btn-dark" onclick="incrementCount('${club}')">Gezien</button>
+                            <h2 class="mt-3">${selectedClub.name}</h2>
                         </div>
-                        <img src="${selectedClub.logo}" alt="${selectedClub.name}" style="width: 80px;">
+                        <img src="${selectedClub.logo}" alt="${selectedClub.name}">
                     </div>
-                    <h2 class="mt-3">${selectedClub.name}</h2>
-                    <p><strong>Year Founded:</strong> ${selectedClub.yearFounded}</p>
-                    <p><strong>Coach:</strong> ${selectedClub.coach}</p>
-                    <p><strong>League:</strong> ${selectedClub.league}</p>
-                    <h4>Elftal:</h4>
-                    <ol>
-                        ${selectedClub.squad.map(player => `<li>${player}</li>`).join("")}
-                    </ol>
-                    <p><strong>Stadium:</strong> ${selectedClub.stadium}</p>
-                    <p><strong>Land:</strong> ${selectedClub.country}</p>
+                    <div class="club-details" style="">
+                        <div style="flex: 1; padding-right: 20px;">
+                            <p><strong>Oprichting:</strong> ${selectedClub.oprichting}</p>
+                            <p><strong>Coach:</strong> ${selectedClub.coach}</p>
+                            <p><strong>League:</strong> ${selectedClub.league}</p>
+                            <h4>Elftal:</h4>
+                            <ol>
+                                ${selectedClub.squad.map(player => `<li>${player}</li>`).join("")}
+                            </ol>
+                            <p><strong>Stadium:</strong> ${selectedClub.stadium}</p>
+                            <p><strong>Land:</strong> ${selectedClub.country}</p>
+                        </div>
+                        <div>
+                            <img src="${selectedClub.stadiumImage}" alt="${selectedClub.stadium}" class="stadium-image">
+                        </div>
+                        
+                    </div>
                 </div>
             `;
-
+            document.querySelector(".mb-3").classList.add("d-none");
             clubList.classList.add("d-none");
             clubDetail.classList.remove("d-none");
         }
@@ -94,6 +106,7 @@ document.addEventListener("DOMContentLoaded", function () {
     window.goBack = function () {
         clubList.classList.remove("d-none");
         clubDetail.classList.add("d-none");
+        document.querySelector(".mb-3").classList.remove("d-none");
     };
 
     window.incrementCount = function (club) {
@@ -111,7 +124,7 @@ document.addEventListener("DOMContentLoaded", function () {
 });
 
 
-function addNewClub() { 
+function addNewClub() {
     const clubNameInput = document.getElementById("clubNameInput");
     const clubName = clubNameInput.value.trim();
 

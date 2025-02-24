@@ -1,7 +1,7 @@
 body ::before{
     content: "";
     position: fixed;
-    top: 70px;
+    top:-20px;
     left: -20px;
     right: -20px;
     bottom: -20px;
@@ -60,8 +60,63 @@ h2 {
     width: 350px;
 }
 
+.club-details{
+    display: flex; justify-content: space-between; align-items: flex-start;
+}
+.club-detail-box {
+    background-color: #07F468; 
+    border-radius: 10px; 
+    padding: 1rem; 
+}
 
+.club-header {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+}
 
+.club-header img {
+    width: 200px; 
+    margin: 0 auto; 
+}
+
+.club-details p {
+    margin: 0.5rem 0; 
+}
+
+.stadium-image {
+    width: 1000px; 
+    height: 500px; 
+    margin-left: 5px; 
+    align-self: flex-start; 
+}
+
+@media (max-width: 1400px) {
+    .stadium-image {
+        width: 800px; 
+        height: 500px; 
+        margin-left: 5px; 
+        align-self: flex-start; 
+    }
+}
+
+@media (max-width: 1200px) {
+    .stadium-image {
+        width: 600px; 
+        height: 500px; 
+        margin-left: 5px; 
+        align-self: flex-start; 
+    }
+}
+
+@media (max-width: 990px) {
+    .stadium-image {
+        width: 400px; 
+        height: 500px; 
+        margin-left: 5px; 
+        align-self: flex-start; 
+    }
+}
 
 @media (max-width: 768px) {
     body {
@@ -78,8 +133,6 @@ h2 {
     .form-group {
         visibility: hidden; 
     }
-    
-    
 
     .mb-3 {
         display: flex;
@@ -131,5 +184,12 @@ h2 {
 
     .list-group-item button:hover {
         background-color: gray;
+    }
+    .club-header img {
+        width: 150px; 
+        margin: 0 auto; 
+    }
+    .stadium-image {
+        visibility: hidden;
     }
 }
