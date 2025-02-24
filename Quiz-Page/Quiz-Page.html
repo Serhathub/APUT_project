@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./Quiz-Page.css">
+    
+    <title>FIFA Quiz_Page</title>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1>FIFA Quiz</h1>
+            <img src="./Assets/user.png" alt="">
+        </header>
+        <main class="quiz-content">
+            <div class="hint">
+                <p>Hint: Heeft het meeste champions leagues gewonnen</p>
+            </div>
+            <div class="options">
+                <button class="option">PSG</button>
+                <button class="option">Real Madrid</button>
+                <button class="option">FC Barcelona</button>
+                <button class="option">Arsenal</button>
+            </div>
+            
+            <div class="hearts">
+                <span class="heart" id="heart1">❤️</span>
+                <span class="heart" id="heart2">❤️</span>
+                <span class="heart" id="heart3">❤️</span>
+                <span class="heart" id="heart4">❤️</span>
+                <span class="heart" id="heart5">❤️</span>
+            </div>
+            <div class="skip">
+                <button class="skip-button">Overslaan 🖤</button>
+            </div>
+            <div id="gameOverPopUp" class="popUp">
+                <div class="popUpcontent">
+                    <h2>Game Over!</h2>
+                    <p>Sorry, je hebt geen levens meer.</p>
+                    <button id="closepopUp" class="closebutton">Sluit</button>
+                </div>
+            </div>
+
+            <div class="reaction">
+                <span class="thumbs-up">👍</span>
+                <span class="thumbs-down">👎</span>
+            </div>
+            <div class="guessTheClubPhotoContainer">
+                <div class="guessTheClubPhoto">
+                    <img src="./Assets/Adobe Express - file (1).png" alt="RealMadrid_Logo" id="realMadridLogo">
+                </div>
+            </div>
+        </main>
+    </div>
+    <script src="Quiz-Page.js"></script>
+</body>
+</html>
