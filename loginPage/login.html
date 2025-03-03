@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Login</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+  />
+
+  <link rel="stylesheet" href="login.css" />
+</head>
+<body>
+  <nav class="navbar navbar-custom">
+    <div class="container-fluid d-flex justify-content-between align-items-center">
+      <span class="navbar-brand navbar-brand-custom mx-auto">WPL Games</span>
+    </div>
+  </nav>
+
+  <div class="content-container">
+    <div class="login-box p-4 bg-white rounded shadow">
+      <img src="Assets/Clubs.png" alt="Clubs foto" class="club-photo mb-3" />
+
+      <h2 class="text-center welcome-title mb-2">Welkom</h2>
+
+      <hr class="title-divider mb-4" />
+
+      <form>
+        <div class="mb-3">
+          <label for="username" class="form-label">Gebruikersnaam:</label>
+          <input
+            type="text"
+            class="form-control"
+            id="username"
+            placeholder="Voer je gebruikersnaam in"
+          />
+        </div>
+
+        <div class="mb-3">
+          <label for="password" class="form-label">Wachtwoord:</label>
+          <input
+            type="password"
+            class="form-control"
+            id="password"
+            placeholder="Voer je wachtwoord in"
+          />
+        </div>
+
+        <button type="submit" class="btn login-btn w-100">
+          Login
+        </button>
+      </form>
+
+      <div class="text-center mt-3">
+        <a href="#" id="forgot-password-link" class="forgot-password" data-bs-toggle="modal" data-bs-target="#resetPasswordModal">Wachtwoord vergeten?</a>
+      </div>
+
+      <div class="text-center mt-4 register-container">
+        Nog geen account? <a href="register.html" class="register-link">Registreer Nu!</a>
+      </div>
+    </div>
+  </div>
+
+  <div class="modal fade" id="resetPasswordModal" tabindex="-1" aria-labelledby="resetPasswordModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h5 class="modal-title" id="resetPasswordModalLabel">Wachtwoord Reset</h5>
+          <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Sluiten"></button>
+        </div>
+        <div class="modal-body">
+          <form id="resetPasswordForm">
+            <div class="mb-3">
+              <label for="resetEmail" class="form-label">Voer je e-mailadres in:</label>
+              <input type="email" class="form-control" id="resetEmail" placeholder="jouw@example.com" required>
+            </div>
+          </form>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn reset-btn">Wachtwoord resetten</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+  ></script>
+
+  <script src="login.js"></script>
+</body>
+</html>
