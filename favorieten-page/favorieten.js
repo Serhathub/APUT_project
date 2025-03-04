@@ -14,6 +14,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const clubData = {
             barcelona: {
                 name: "FC Barcelona",
+                clubRating: "ATK: 90 MID: 85 DEF: 91",
                 logo: "assets/FC_BARCELONA_LOGO.png",
                 oprichting: 1899,
                 coach: "Xavi Hernández",
@@ -28,6 +29,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             psg: {
                 name: "Paris Saint-Germain",
+                clubRating: "ATK: 88 MID: 81 DEF: 80",
                 logo: "assets/PSG_LOGO.png",
                 oprichting: 1970,
                 coach: "Christophe Galtier",
@@ -39,6 +41,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             realmadrid: {
                 name: "Real Madrid",
+                clubRating: "ATK: 93 MID: 90 DEF: 91",
                 logo: "assets/REALMADRID_LOGO.png",
                 oprichting: 1902,
                 coach: "Carlo Ancelotti",
@@ -50,6 +53,7 @@ document.addEventListener("DOMContentLoaded", function () {
             },
             arsenal: {
                 name: "Arsenal",
+                clubRating: "ATK: 82 MID: 84 DEF: 85",
                 logo: "assets/ARSENAL_LOGO.png",
                 oprichting: 1886,
                 coach: "Mikel Arteta",
@@ -79,6 +83,7 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                     <div class="club-details" style="">
                         <div style="flex: 1; padding-right: 20px;">
+                            <p><strong>Club ratings:</strong> ${selectedClub.clubRating}</p>
                             <p><strong>Oprichting:</strong> ${selectedClub.oprichting}</p>
                             <p><strong>Coach:</strong> ${selectedClub.coach}</p>
                             <p><strong>League:</strong> ${selectedClub.league}</p>
