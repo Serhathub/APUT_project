@@ -1,0 +1,114 @@
+body::before {
+    content: "";
+    position: fixed;
+    top: -20px;
+    left: -20px;
+    right: -20px;
+    bottom: -20px;
+    background: url("./assets/fifaAchtergrond.png") no-repeat center center;
+    background-size: cover;
+    filter: blur(5px);
+    z-index: -1;
+}
+
+h1 {
+    background-color: #07F468;
+    color: black;
+    padding: 10px 20px;
+    font-weight: bold;
+    border-radius: 5px;
+}
+
+.list-group-item {
+    background-color: #07F468;
+    color: black;
+    margin: 10px 0;
+    padding: 8px;
+    border-radius: 5px;
+    height: 110px;
+    display: grid;
+    grid-template-columns: 0.3fr 1fr 2fr 0.5fr;
+    align-items: center;
+}
+
+.list-group-item img {
+    height: 100px;
+    width: 100px;
+}
+
+.club-name {
+    font-size: 30px;
+    font-weight: bold;
+}
+
+.club-notes {
+    width: 100%;
+    resize: none;
+    padding: 8px;
+}
+
+.remove-btn {
+    background-color:black;
+    color: #07F468;
+    border: none;
+    cursor: pointer;
+}
+
+.remove-btn:hover {
+    background-color: #07F468;
+    color: black;
+}
+.profile-icon {
+    width: 70px;
+    height: 70px; 
+}
+.profile-icon:hover {
+    opacity: 0.61; 
+}
+.dropdown{
+    position: absolute;
+    right: 0px; 
+    top: 0px;
+    width: 70px;
+    height: 70px; 
+    cursor: pointer; 
+}
+
+@media (max-width:768px){
+    .list-group-item {
+        background-color: #07F468;
+        color: black;
+        margin: 10px 0;
+        padding: 8px;
+        border-radius: 5px;
+        height: auto;
+        display: block;
+        grid-template-columns: 0.1fr 0.5fr 1.5fr 0.5fr;
+        align-items: center;
+    }
+    .list-group-item img {
+        width: 80px;
+        height: auto; 
+        margin-bottom: 10px;
+    }
+    .club-name {
+        font-size: 40px; 
+    }
+    .club-notes {
+        width: 150px;
+        resize: none;
+        padding: 8px;
+    }
+    .club-notes {
+        width: 100%; 
+        resize: none;
+        padding: 8px;
+        margin-bottom: 10px;
+    }
+
+    .remove-btn {
+        width: 100%; 
+        padding: 10px;
+    }
+    
+}
