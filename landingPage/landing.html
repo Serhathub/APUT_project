@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Games</title>
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/css/bootstrap.min.css"
+  />
+
+  <link
+    rel="stylesheet"
+    href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css"
+  />
+
+  <link rel="stylesheet" href="landing.css" />
+</head>
+<body>
+  <header>
+    <nav class="navbar navbar-custom">
+      <div class="container-fluid d-flex justify-content-between align-items-center">
+        <div class="placeholder"></div>
+        <span class="navbar-brand navbar-brand-custom mx-auto">Games</span>
+      
+        <div class="dropdown">
+          <button class="btn btn-link user-icon-btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+            <i class="bi bi-person-circle"></i>
+          </button>
+          <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+            <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profiel</a></li>
+            <li><hr class="dropdown-divider"></li>
+            <li><a class="dropdown-item" href="#">Uitloggen</a></li>
+          </ul>
+        </div>
+      </div>
+    </nav>
+  </header>
+
+  <main>
+    <div class="content-container">
+      <div class="game-box p-4 bg-white rounded shadow">
+        <h2 class="game-header mb-4 text-center">Kies je game:</h2>
+        <div class="row">
+          <div class="col-6 mb-3">
+            <a href="#" class="list-group-item list-group-item-action game-option">
+              <img class="game-img game-img-large" src="Assets/Fifa.png" alt="Fifa Game">
+              <div class="game-text">Fifa Game</div>
+            </a>
+          </div>
+          <div class="col-6 mb-3">
+            <a href="#" class="list-group-item list-group-item-action game-option">
+              <img class="game-img" src="Assets/LOTR.png" alt="LOTR Game">
+              <div class="game-text">LOTR Game</div>
+            </a>
+          </div>
+          <div class="col-6 mb-3">
+            <a href="#" class="list-group-item list-group-item-action game-option">
+              <img class="game-img" src="Assets/Fortnite.png" alt="Fortnite Game">
+              <div class="game-text">Fortnite Game</div>
+            </a>
+          </div>
+          <div class="col-6 mb-3">
+            <a href="#" class="list-group-item list-group-item-action game-option">
+              <img class="game-img game-img-small" src="Assets/MTG.png" alt="MTG Game">
+              <div class="game-text">MTG Game</div>
+            </a>
+          </div>
+          <div class="col-6 mb-3">
+            <a href="#" class="list-group-item list-group-item-action game-option">
+              <img class="game-img game-img-large" src="Assets/LegoMasters.png" alt="LegoMasters Game">
+              <div class="game-text">LegoMasters Game</div>
+            </a>
+          </div>
+          <div class="col-6 mb-3">
+            <a href="#" class="list-group-item list-group-item-action game-option">
+              <img class="game-img" src="Assets/Pokemon.png" alt="Pokemon Game">
+              <div class="game-text">Pokemon Game</div>
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="popup" class="popup-overlay">
+      <div class="popup">
+        <button class="popup-close">&times;</button>
+        <p>Sorry, je mag niet deelnemen aan dit spel.</p>
+      </div>
+    </div>
+
+    <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered modal-lg">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h5 class="modal-title" id="profileModalLabel">Profielgegevens</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Sluiten"></button>
+          </div>
+          <div class="modal-body">
+            <div class="container">
+              <div class="row">
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="profileUsername" class="form-label">Gebruikersnaam:</label>
+                    <input type="text" class="form-control" id="profileUsername" value="DummyUser" readonly>
+                  </div>
+                  <div class="mb-3">
+                    <label for="profileEmail" class="form-label">Email:</label>
+                    <input type="email" class="form-control" id="profileEmail" value="dummy@example.com" readonly>
+                  </div>
+                </div>
+                <div class="col-md-6">
+                  <div class="mb-3">
+                    <label for="profilePassword" class="form-label">Wachtwoord:</label>
+                    <input type="password" class="form-control" id="profilePassword" value="********" readonly>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="modal-footer">
+            <button id="editProfileBtn" type="button" class="btn btn-secondary">Bewerken</button>
+            <button id="cancelProfileBtn" type="button" class="btn btn-danger" style="display: none;">Annuleren</button>
+            <button id="saveProfileBtn" type="button" class="btn" style="display: none;">Opslaan</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script
+    src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
+  ></script>
+  <script src="landing.js"></script>
+</body>
+</html>
