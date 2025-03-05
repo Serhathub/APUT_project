@@ -1,0 +1,131 @@
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+body::before {
+  content: "";
+  position: fixed;
+  top: 70px;
+  left: -20px;
+  right: -20px;
+  bottom: -20px;
+  background: url("Assets/fifaAchtergrond.png") no-repeat center center;
+  background-size: cover;
+  filter: blur(5px);
+  z-index: -1;
+}
+
+.navbar-custom {
+  background-color: #07F468;
+}
+
+.placeholder {
+  width: 30px;
+  background-color: #07F468;
+}
+
+.navbar-brand-custom {
+  color: #000;
+  font-weight: bold;
+  font-size: 2rem;
+  cursor: default;
+}
+
+
+.content-container {
+  min-height: calc(100vh - 70px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.registration-box {
+  width: 70%;
+  max-width: 600px;
+  background-color: #fff;
+  padding: 30px;
+  border-radius: 5px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+}
+
+.club-photo {
+    width: 80%;
+    margin: 0 auto;
+    display: block;
+    object-fit: cover;
+    border-radius: 5px;
+  }
+  
+.registration-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-align: center;
+  margin-bottom: 1.5rem;
+}
+
+.title-divider {
+    width: 95%;
+    margin: 0 auto;
+    border: 1px solid #000;
+}
+
+.validate-input {
+  border: none;
+  border-bottom: 2px solid #ccc;
+  transition: border-color 0.3s ease;
+  outline: none;
+}
+
+.validate-input.active {
+  border-bottom-color: #aaa;
+}
+
+.validate-input.valid {
+  border-bottom-color: #07F468;
+}
+
+.validate-input.invalid {
+  border-bottom-color: #dc3545;
+}
+
+.password-requirements {
+  font-size: 0.9rem;
+  color: #000;
+}
+
+.registration-btn {
+  background-color: #07F468;
+  color: #000;
+  border: none;
+  font-weight: bold;
+}
+
+.registration-btn:hover {
+    background-color:#06c15e ;
+}
+
+@media (max-width: 768px) {
+  .registration-box {
+    font-size: 1.3rem;
+    width: 95%;
+    padding: 20px;
+  }
+  .navbar-brand-custom {
+    font-size: 1.8rem;
+  }
+  .registration-title {
+    font-size: 1.8rem;
+  }
+  .password-requirements .form-check-label {
+    font-size: 1.2rem;
+  }
+  .registration-btn {
+    font-size: 1.3rem;
+  }
+}
