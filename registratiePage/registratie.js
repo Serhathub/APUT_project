@@ -106,4 +106,17 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
+  document.querySelectorAll('.toggle-password').forEach(function(toggle) {
+    toggle.addEventListener('click', function() {
+      const targetId = this.getAttribute('data-target');
+      const input = document.getElementById(targetId);
+      if (input.type === "password") {
+        input.type = "text";
+        this.innerHTML = '<i class="bi bi-eye-slash"></i>';
+      } else {
+        input.type = "password";
+        this.innerHTML = '<i class="bi bi-eye"></i>';
+      }
+    });
+  });
 });
