@@ -75,6 +75,30 @@ body::before {
     border: 1px solid #000;
 }
 
+.validate-input {
+  border: none;
+  border-bottom: 2px solid #ccc;
+  transition: border-color 0.3s ease;
+  outline: none;
+}
+
+.validate-input.active {
+  border-bottom-color: #aaa;
+}
+
+.validate-input.valid {
+  border-bottom-color: #07F468;
+}
+
+.validate-input.invalid {
+  border-bottom-color: #dc3545;
+}
+
+.password-requirements {
+  font-size: 0.9rem;
+  color: #000;
+}
+
 .registration-btn {
   background-color: #07F468;
   color: #000;
@@ -88,6 +112,7 @@ body::before {
 
 @media (max-width: 768px) {
   .registration-box {
+    font-size: 1.3rem;
     width: 95%;
     padding: 20px;
   }
@@ -97,7 +122,10 @@ body::before {
   .registration-title {
     font-size: 1.8rem;
   }
+  .password-requirements .form-check-label {
+    font-size: 1.2rem;
+  }
   .registration-btn {
-    font-size: 1rem;
+    font-size: 1.3rem;
   }
 }
