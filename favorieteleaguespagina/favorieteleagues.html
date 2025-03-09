@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="favorieteleagues.css" />
+    <script src="favorieteleagues.js" defer></script>
+    <title>FavorieteLeagues</title>
+  </head>
+  <body>
+    <h1 class="text-center mb-4">
+      Favoriete Leagues
+      <div class="dropdown">
+        <img
+          src="./assets/profiel_Icon.png"
+          alt="Profiel Icon"
+          class="profile-icon"
+          data-bs-toggle="dropdown"
+          aria-expanded="false"
+        />
+        <ul class="dropdown-menu dropdown-menu-end">
+          <li><a class="dropdown-item" href="#">Profiel</a></li>
+          <li><hr class="dropdown-divider" /></li>
+          <li><a class="dropdown-item" href="#">Uitloggen</a></li>
+        </ul>
+      </div>
+    </h1>
+
+    <div class="leaguesContainer">
+      <div class="league">
+        <img src="Assets/LaLiga_logo.png" alt="LaLiga Logo" />
+        <p>
+          Naam: LaLiga <br />
+          Land: Spanje <br />
+          Aantal clubs: 20
+        </p>
+        <select class="clubsDropdown1">
+          <option value="lijst clubs">Clubs...</option>
+          <option value="club1">Real Madrid</option>
+          <option value="club2">Club 2</option>
+          <option value="club3">Club 3</option>
+          <!-- Add more clubs as necessary -->
+        </select>
+        <button class="remove-button">verwijderen</button>
+        <div class="info"></div>
+      </div>
+
+      <div class="league">
+        <img src="Assets/Premier_League_Logo.png" alt="Premier League Logo" />
+        <p>
+          Naam: Premier League <br />
+          Land: Verenigd Koninkrijk <br />
+          Aantal clubs: 20
+        </p>
+        <select class="clubsDropdown">
+          <option value="lijst clubs">Clubs...</option>
+          <option value="club1">Arsenal</option>
+          <option value="club2">Club 2</option>
+          <option value="club3">Club 3</option>
+          <!-- Add more clubs as necessary -->
+        </select>
+        <button class="remove-button">verwijderen</button>
+        <div class="info"></div>
+      </div>
+
+      <div class="league">
+        <img src="Assets/Bundesliga-logo.png" alt="Bundesliga Logo" />
+        <p>
+          Naam: Bundesliga <br />
+          Land: Duitsland <br />
+          Aantal clubs: 18
+        </p>
+        <select class="clubsDropdown">
+          <option value="lijst clubs">Clubs...</option>
+          <option value="club1">bayern munich</option>
+          <option value="club2">Club 2</option>
+          <option value="club3">Club 3</option>
+          <!-- Add more clubs as necessary -->
+        </select>
+        <button class="remove-button">verwijderen</button>
+        <div class="info"></div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  </body>
+</html>
