@@ -10,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
             showClubDetails(club);
         });
     });
-
+    const seenCounts = {};
     function showClubDetails(club) {
         const clubData = {
             barcelona: {
@@ -69,8 +69,7 @@ document.addEventListener("DOMContentLoaded", function () {
         const selectedClub = clubData[club];
 
         if (selectedClub) {
-            const seenCount = document.getElementById(`count-${club}`).innerText;
-
+            let seenCount = seenCounts[club] || 0;
             clubContent.innerHTML = `
                 <div class="club-detail-box">
                     <div class="club-header">
@@ -116,15 +115,14 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.incrementCount = function (club) {
+        seenCounts[club] = (seenCounts[club] || 0) + 1;
         const countElement = document.getElementById(`count-${club}`);
         if (countElement) {
-            let count = parseInt(countElement.innerText);
-            countElement.innerText = count + 1;
+            countElement.innerText = seenCounts[club];
         }
         const detailCountElement = document.getElementById("detail-seen-count");
         if (detailCountElement) {
-            let detailCount = parseInt(detailCountElement.innerText);
-            detailCountElement.innerText = detailCount + 1;
+            detailCountElement.innerText = seenCounts[club];
         }
     };
     const editProfileBtn = document.getElementById("editProfileBtn");
