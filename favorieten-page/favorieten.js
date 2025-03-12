@@ -83,16 +83,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                     <div class="club-details" style="">
                         <div style="flex: 1; padding-right: 20px;">
-                            <p><strong>Club ratings:</strong> ${selectedClub.clubRating}</p>
-                            <p><strong>Oprichting:</strong> ${selectedClub.oprichting}</p>
-                            <p><strong>Coach:</strong> ${selectedClub.coach}</p>
-                            <p><strong>League:</strong> ${selectedClub.league}</p>
-                            <h4>Elftal:</h4>
+                            <p><strong><u>Club ratings:</u></strong> ${selectedClub.clubRating}</p>
+                            <p><strong><u>Oprichting:</u></strong> ${selectedClub.oprichting}</p>
+                            <p><strong><u>Coach:</u></strong> ${selectedClub.coach}</p>
+                            <p><strong><u>League:</u></strong> ${selectedClub.league}</p>
+                            <h4><strong><u>Elftal:</u></strong></h4>
                             <ol>
                                 ${selectedClub.squad.map(player => `<li>${player}</li>`).join("")}
                             </ol>
-                            <p><strong>Stadium:</strong> ${selectedClub.stadium}</p>
-                            <p><strong>Land:</strong> ${selectedClub.country}</p>
+                            <p><strong><u>Stadium:</u></strong> ${selectedClub.stadium}</p>
+                            <p><strong><u>Land:</u></strong> ${selectedClub.country}</p>
                         </div>
                         <div>
                             <img src="${selectedClub.stadiumImage}" alt="${selectedClub.stadium}" class="stadium-image">
