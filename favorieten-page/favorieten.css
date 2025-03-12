@@ -83,7 +83,10 @@ h2 {
 .club-details p {
     margin: 0.5rem 0; 
 }
-
+.form-group {
+    font-size: large;
+    font-weight: bold;
+}
 .stadium-image {
     width: 1000px; 
     height: 500px; 

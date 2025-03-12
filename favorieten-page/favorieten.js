@@ -74,7 +74,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <div class="club-detail-box">
                     <div class="club-header">
                         <div>
-                            <p>Aantal keer LIVE gezien:</p>
+                            <p><strong>Aantal keer LIVE gezien:</p>
                             <h3 id="detail-seen-count">${seenCount}</h3> 
                             <button class="btn btn-dark" onclick="incrementCount('${club}')">Gezien</button>
                             <h2 class="mt-3">${selectedClub.name}</h2>

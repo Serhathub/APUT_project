@@ -10,7 +10,10 @@ document.addEventListener("DOMContentLoaded", function () {
 
     function renderBlacklistedClubs() {
         blacklistClubList.innerHTML = "";
-
+        if (blacklistedClubs.length === 0) {
+          document.getElementById("emptyMessage").style.display = "block";
+          return;
+        } 
         blacklistedClubs.forEach((club, index) => {
             const clubItem = document.createElement("div");
             clubItem.classList.add("list-group-item");
@@ -19,7 +22,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 <img src="${club.logo}" alt="${club.name}" class="me-3">
                 <span class="club-name">${club.name}</span>
                 <textarea class="form-control club-notes" placeholder="Voeg een reden toe..."></textarea>
-                <button class="btn btn-danger remove-btn" data-index="${index}">Verwijderen</button>
+                <button class="btn btn-danger remove-btn fs-4" data-index="${index}">Verwijderen</button>
             `;
 
             blacklistClubList.appendChild(clubItem);

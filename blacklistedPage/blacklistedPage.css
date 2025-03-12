@@ -45,6 +45,7 @@ h1 {
     width: 100%;
     resize: none;
     padding: 8px;
+    
 }
 
 .remove-btn {
@@ -52,6 +53,7 @@ h1 {
     color: #07F468;
     border: none;
     cursor: pointer;
+    margin-left: 10px;
 }
 
 .remove-btn:hover {
@@ -138,6 +140,7 @@ h1 {
     .remove-btn {
         width: 100%; 
         padding: 10px;
+        margin-left: 0;
     }
     
 }
