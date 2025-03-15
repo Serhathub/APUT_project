@@ -67,6 +67,9 @@ document.addEventListener("DOMContentLoaded", () => {
       ) {
         event.preventDefault();
         alert("Email of wachtwoord is ongeldig");
+      } else {
+        event.preventDefault();
+        window.location.href = "../loginPage/login.html?registered=success";
       }
     });
   }

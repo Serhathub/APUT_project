@@ -184,6 +184,19 @@ body.modal-open {
   background-color: #c82333;
 }
 
+.login-btn-custom {
+  background-color: #07F468;
+  border: none;
+  color: #000;
+}
+
+.login-btn-custom:hover {
+  background-color: #06c15e;
+  border: none;
+  color: #000;
+}
+
+
 /* --- Mobile --- */
 @media (max-width: 768px) {
   .row > div {

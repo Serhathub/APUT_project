@@ -44,7 +44,7 @@
         <h2 class="game-header mb-4 text-center">Kies je game:</h2>
         <div class="row">
           <div class="col-6 mb-3">
-            <a href="#" class="list-group-item list-group-item-action game-option">
+            <a href="../Quiz-Page/quiz.html" class="list-group-item list-group-item-action game-option">
               <img class="game-img game-img-large" src="Assets/Fifa.png" alt="Fifa Game">
               <div class="game-text">Fifa Game</div>
             </a>
@@ -103,17 +103,17 @@
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label for="profileUsername" class="form-label">Gebruikersnaam:</label>
-                    <input type="text" class="form-control" id="profileUsername" value="DummyUser" readonly>
+                    <input type="text" class="form-control" id="profileUsername" value="TestTest12" readonly>
                   </div>
                   <div class="mb-3">
                     <label for="profileEmail" class="form-label">Email:</label>
-                    <input type="email" class="form-control" id="profileEmail" value="dummy@example.com" readonly>
+                    <input type="email" class="form-control" id="profileEmail" value="Test@Test.com" readonly>
                   </div>
                 </div>
                 <div class="col-md-6">
                   <div class="mb-3">
                     <label for="profilePassword" class="form-label">Wachtwoord:</label>
-                    <input type="password" class="form-control" id="profilePassword" value="********" readonly>
+                    <input type="password" class="form-control" id="profilePassword" value="**********" readonly>
                   </div>
                 </div>
               </div>
@@ -124,6 +124,24 @@
             <button id="cancelProfileBtn" type="button" class="btn btn-danger" style="display: none;">Annuleren</button>
             <button id="saveProfileBtn" type="button" class="btn" style="display: none;">Opslaan</button>
           </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="modal fade" id="loginPromptModal" tabindex="-1" aria-labelledby="loginPromptModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+           <div class="modal-header">
+             <h5 class="modal-title" id="loginPromptModalLabel">Inloggen vereist</h5>
+             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Sluiten"></button>
+           </div>
+           <div class="modal-body">
+             Je bent niet ingelogd. Log in om deel te nemen aan het spel.
+           </div>
+           <div class="modal-footer">
+             <a href="../loginPage/login.html" class="btn login-btn-custom">Naar login pagina</a>
+             <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Annuleren</button>
+           </div>
         </div>
       </div>
     </div>

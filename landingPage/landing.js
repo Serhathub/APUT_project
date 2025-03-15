@@ -1,5 +1,7 @@
 document.addEventListener("DOMContentLoaded", () => {
   // --- Games ---
+  let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  
   const gameOptions = document.querySelectorAll(".game-option");
 
   gameOptions.forEach(option => {
@@ -8,6 +10,12 @@ document.addEventListener("DOMContentLoaded", () => {
       if (gameName !== "Fifa Game") {
         event.preventDefault();
         document.getElementById("popup").style.display = "flex";
+      } else {
+        if (!isLoggedIn) {
+          event.preventDefault();
+          let loginPromptModal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
+          loginPromptModal.show();
+        }
       }
     });
   });
