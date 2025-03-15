@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", function () {
+    
     const clubList = document.getElementById("clubList");
     const clubDetail = document.getElementById("clubDetail");
     const clubContent = document.getElementById("clubContent");
@@ -9,7 +10,7 @@ document.addEventListener("DOMContentLoaded", function () {
             showClubDetails(club);
         });
     });
-
+    const seenCounts = {};
     function showClubDetails(club) {
         const clubData = {
             barcelona: {
@@ -68,13 +69,12 @@ document.addEventListener("DOMContentLoaded", function () {
         const selectedClub = clubData[club];
 
         if (selectedClub) {
-            const seenCount = document.getElementById(`count-${club}`).innerText;
-
+            let seenCount = seenCounts[club] || 0;
             clubContent.innerHTML = `
                 <div class="club-detail-box">
                     <div class="club-header">
                         <div>
-                            <p>Aantal keer LIVE gezien:</p>
+                            <p><strong>Aantal keer LIVE gezien:</p>
                             <h3 id="detail-seen-count">${seenCount}</h3> 
                             <button class="btn btn-dark" onclick="incrementCount('${club}')">Gezien</button>
                             <h2 class="mt-3">${selectedClub.name}</h2>
@@ -83,16 +83,16 @@ document.addEventListener("DOMContentLoaded", function () {
                     </div>
                     <div class="club-details" style="">
                         <div style="flex: 1; padding-right: 20px;">
-                            <p><strong>Club ratings:</strong> ${selectedClub.clubRating}</p>
-                            <p><strong>Oprichting:</strong> ${selectedClub.oprichting}</p>
-                            <p><strong>Coach:</strong> ${selectedClub.coach}</p>
-                            <p><strong>League:</strong> ${selectedClub.league}</p>
-                            <h4>Elftal:</h4>
+                            <p><strong><u>Club ratings:</u></strong> ${selectedClub.clubRating}</p>
+                            <p><strong><u>Oprichting:</u></strong> ${selectedClub.oprichting}</p>
+                            <p><strong><u>Coach:</u></strong> ${selectedClub.coach}</p>
+                            <p><strong><u>League:</u></strong> ${selectedClub.league}</p>
+                            <h4><strong><u>Elftal:</u></strong></h4>
                             <ol>
                                 ${selectedClub.squad.map(player => `<li>${player}</li>`).join("")}
                             </ol>
-                            <p><strong>Stadium:</strong> ${selectedClub.stadium}</p>
-                            <p><strong>Land:</strong> ${selectedClub.country}</p>
+                            <p><strong><u>Stadium:</u></strong> ${selectedClub.stadium}</p>
+                            <p><strong><u>Land:</u></strong> ${selectedClub.country}</p>
                         </div>
                         <div>
                             <img src="${selectedClub.stadiumImage}" alt="${selectedClub.stadium}" class="stadium-image">
@@ -115,17 +115,76 @@ document.addEventListener("DOMContentLoaded", function () {
     };
 
     window.incrementCount = function (club) {
+        seenCounts[club] = (seenCounts[club] || 0) + 1;
         const countElement = document.getElementById(`count-${club}`);
         if (countElement) {
-            let count = parseInt(countElement.innerText);
-            countElement.innerText = count + 1;
+            countElement.innerText = seenCounts[club];
         }
         const detailCountElement = document.getElementById("detail-seen-count");
         if (detailCountElement) {
-            let detailCount = parseInt(detailCountElement.innerText);
-            detailCountElement.innerText = detailCount + 1;
+            detailCountElement.innerText = seenCounts[club];
         }
     };
+    const editProfileBtn = document.getElementById("editProfileBtn");
+    const saveProfileBtn = document.getElementById("saveProfileBtn");
+    const cancelProfileBtn = document.getElementById("cancelProfileBtn");
+    const usernameInput = document.getElementById("profileUsername");
+    const emailInput = document.getElementById("profileEmail");
+    const closeProfileBtn = document.getElementById("profileModal")
+  
+    const originalUsername = usernameInput.value;
+    const originalEmail = emailInput.value;
+  
+    if (editProfileBtn) {
+      editProfileBtn.addEventListener("click", () => {
+        usernameInput.readOnly = false;
+        emailInput.readOnly = false;
+        usernameInput.style.backgroundColor = "#fff";
+        emailInput.style.backgroundColor = "#fff";
+        editProfileBtn.style.display = "none";
+        cancelProfileBtn.style.display = "inline-block";
+        saveProfileBtn.style.display = "inline-block";
+      });
+    }
+  
+    if (saveProfileBtn) {
+      saveProfileBtn.addEventListener("click", () => {
+        console.log("Dummy opslaan:", usernameInput.value, emailInput.value);
+        usernameInput.readOnly = true;
+        emailInput.readOnly = true;
+        usernameInput.style.backgroundColor = "#e9e9e9";
+        emailInput.style.backgroundColor = "#e9e9e9";
+        saveProfileBtn.style.display = "none";
+        cancelProfileBtn.style.display = "none";
+        editProfileBtn.style.display = "inline-block";
+      });
+  
+      if (cancelProfileBtn) {
+        cancelProfileBtn.addEventListener("click", () => {
+          usernameInput.value = originalUsername;
+          emailInput.value = originalEmail;
+          usernameInput.readOnly = true;
+          emailInput.readOnly = true;
+          usernameInput.style.backgroundColor = "#e9e9e9";
+          emailInput.style.backgroundColor = "#e9e9e9";
+          saveProfileBtn.style.display = "none";
+          cancelProfileBtn.style.display = "none";
+          editProfileBtn.style.display = "inline-block";
+        });
+      }
+  
+      closeProfileBtn.addEventListener("hidden.bs.modal", function() {
+        usernameInput.value = originalUsername;
+        emailInput.value = originalEmail;
+        usernameInput.readOnly = true;
+        emailInput.readOnly = true;
+        usernameInput.style.backgroundColor = "#e9e9e9";
+        emailInput.style.backgroundColor = "#e9e9e9";
+        saveProfileBtn.style.display = "none";
+        cancelProfileBtn.style.display = "none";
+        editProfileBtn.style.display = "inline-block";
+      })};
+    
 });
 
 

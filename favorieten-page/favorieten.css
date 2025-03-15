@@ -83,7 +83,10 @@ h2 {
 .club-details p {
     margin: 0.5rem 0; 
 }
-
+.form-group {
+    font-size: large;
+    font-weight: bold;
+}
 .stadium-image {
     width: 1000px; 
     height: 500px; 
@@ -105,6 +108,36 @@ h2 {
     height: 70px; 
     cursor: pointer; 
 }
+.modal-body input[readonly] {
+    background-color: #e9e9e9 !important;
+    border: 1px solid #ccc;
+    color: #555;
+  }
+  
+  .modal-body input:not([readonly]) {
+    background-color: #fff;
+    border: 1px solid #07F468;
+  }
+  
+  #saveProfileBtn {
+    background-color: #07F468;
+    border: none;
+    color: #000;
+  }
+  
+  #saveProfileBtn:hover {
+    background-color: #06c15e;
+  }
+  
+  #cancelProfileBtn {
+    background-color: #dc3545;
+    border: none;
+    color: #000;
+  }
+  
+  #cancelProfileBtn:hover {
+    background-color: #c82333;
+  }
 @media (max-width: 1400px) {
     .stadium-image {
         width: 800px; 
@@ -131,7 +164,12 @@ h2 {
         align-self: flex-start; 
     }
 }
-
+@media (max-width: 992px){
+    .row > div {
+        flex: 0 0 100%;
+        max-width: 100%;
+      }
+}
 @media (max-width: 768px) {
     body {
         background-color: white; 

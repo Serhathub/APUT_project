@@ -23,10 +23,136 @@
           aria-expanded="false"
         />
         <ul class="dropdown-menu dropdown-menu-end">
-          <li><a class="dropdown-item" href="#">Profiel</a></li>
+          <li>
+            <a
+              class="dropdown-item"
+              href="#"
+              data-bs-toggle="modal"
+              data-bs-target="#profileModal"
+              >Profiel</a
+            >
+          </li>
+          <li><a class="dropdown-item" href="../Quiz-Page/Quiz-Page.html">Game Pagina</a></li>
+          <li>
+            <a class="dropdown-item" href="../favorieten-page/favorieten.html"
+              >Favoriete Clubs</a
+            >
+          </li>
+          <li>
+            <a
+              class="dropdown-item"
+              href="../favorieteleaguespagina/favorieteleagues.html"
+              >Favoriete Leagues</a
+            >
+          </li>
+          <li>
+            <a
+              class="dropdown-item"
+              href="../blacklistedPage/blacklistedPage.html"
+              >Blacklisted Clubs</a
+            >
+          </li>
           <li><hr class="dropdown-divider" /></li>
-          <li><a class="dropdown-item" href="#">Uitloggen</a></li>
+          <li>
+            <a class="dropdown-item" href="../loginPage/login.html"
+              >Uitloggen</a
+            >
+          </li>
         </ul>
+      </div>
+      <div
+        class="modal fade"
+        id="profileModal"
+        tabindex="-1"
+        aria-labelledby="profileModalLabel"
+        aria-hidden="true"
+      >
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="profileModalLabel">
+                Profielgegevens
+              </h5>
+              <button
+                type="button"
+                class="btn-close"
+                data-bs-dismiss="modal"
+                aria-label="Sluiten"
+              ></button>
+            </div>
+            <div class="modal-body">
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="profileUsername" class="form-label"
+                        >Gebruikersnaam:</label
+                      >
+                      <input
+                        type="text"
+                        class="form-control"
+                        id="profileUsername"
+                        value="TestTest12"
+                        readonly
+                      />
+                    </div>
+                    <div class="mb-3">
+                      <label for="profileEmail" class="form-label"
+                        >Email:</label
+                      >
+                      <input
+                        type="email"
+                        class="form-control"
+                        id="profileEmail"
+                        value="Test@Test.com"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                  <div class="col-md-6">
+                    <div class="mb-3">
+                      <label for="profilePassword" class="form-label"
+                        >Wachtwoord:</label
+                      >
+                      <input
+                        type="password"
+                        class="form-control"
+                        id="profilePassword"
+                        value="**********"
+                        readonly
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="modal-footer">
+              <button
+                id="editProfileBtn"
+                type="button"
+                class="btn btn-secondary"
+              >
+                Bewerken
+              </button>
+              <button
+                id="cancelProfileBtn"
+                type="button"
+                class="btn btn-danger"
+                style="display: none"
+              >
+                Annuleren
+              </button>
+              <button
+                id="saveProfileBtn"
+                type="button"
+                class="btn"
+                style="display: none"
+              >
+                Opslaan
+              </button>
+            </div>
+          </div>
+        </div>
       </div>
     </h1>
 
@@ -43,7 +169,6 @@
           <option value="club1">Real Madrid</option>
           <option value="club2">Club 2</option>
           <option value="club3">Club 3</option>
-          <!-- Add more clubs as necessary -->
         </select>
         <button class="remove-button">verwijderen</button>
         <div class="info"></div>
@@ -61,7 +186,6 @@
           <option value="club1">Arsenal</option>
           <option value="club2">Club 2</option>
           <option value="club3">Club 3</option>
-          <!-- Add more clubs as necessary -->
         </select>
         <button class="remove-button">verwijderen</button>
         <div class="info"></div>
@@ -79,7 +203,6 @@
           <option value="club1">bayern munich</option>
           <option value="club2">Club 2</option>
           <option value="club3">Club 3</option>
-          <!-- Add more clubs as necessary -->
         </select>
         <button class="remove-button">verwijderen</button>
         <div class="info"></div>
