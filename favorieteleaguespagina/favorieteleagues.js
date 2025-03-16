@@ -4,7 +4,7 @@ const dropdowns = document.querySelectorAll("select");
 
 const messageDiv = document.createElement("div");
 messageDiv.classList.add("message");
-messageDiv.textContent = "Je hebt geen favorieten, speel eerst de quiz!";
+messageDiv.textContent = "Je hebt geen favoriete league, speel eerst de quiz!";
 container.appendChild(messageDiv);
 
 function checkEmpty() {
@@ -19,28 +19,34 @@ dropdowns.forEach((dropdown) => {
 
     const infoDiv = dropdown.closest(".league").querySelector(".info");
 
-    infoDiv.textContent = `${selectedValue} (Extra informatie...)`;
+    console.log(selectedValue);
 
-    const heartContainer = document.createElement("span");
-    heartContainer.classList.add("heart-container");
-    heartContainer.innerHTML = `
+    if (selectedValue == "Clubs...") {
+      infoDiv.textContent = ``;
+    } else {
+      infoDiv.textContent = `${selectedValue} (Extra informatie...)`;
+
+      const heartContainer = document.createElement("span");
+      heartContainer.classList.add("heart-container");
+      heartContainer.innerHTML = `
       <span class="heart">&#9825;</span> <!-- Heart icon (empty initially) -->
     `;
 
-    const existingHeart = infoDiv.querySelector(".heart-container");
-    if (!existingHeart) {
-      infoDiv.appendChild(heartContainer);
-    }
-
-    const heart = heartContainer.querySelector(".heart");
-    heart.addEventListener("click", function () {
-      heart.classList.toggle("liked");
-      if (heart.classList.contains("liked")) {
-        heart.innerHTML = "&#10084;";
-      } else {
-        heart.innerHTML = "&#9825;";
+      const existingHeart = infoDiv.querySelector(".heart-container");
+      if (!existingHeart) {
+        infoDiv.appendChild(heartContainer);
       }
-    });
+
+      const heart = heartContainer.querySelector(".heart");
+      heart.addEventListener("click", function () {
+        heart.classList.toggle("liked");
+        if (heart.classList.contains("liked")) {
+          heart.innerHTML = "&#10084;";
+        } else {
+          heart.innerHTML = "&#9825;";
+        }
+      });
+    }
   });
 });
 
