@@ -45,12 +45,12 @@
 
         <div class="mb-3">
           <label for="password" class="form-label">Wachtwoord:</label>
-          <input
-            type="password"
-            class="form-control"
-            id="password"
-            placeholder="Voer je wachtwoord in"
-          />
+          <div class="input-group">
+            <input type="password" class="form-control" id="password" placeholder="Voer je wachtwoord in">
+            <span class="input-group-text toggle-password" data-target="password">
+              <i class="bi bi-eye-slash"></i>
+            </span>
+          </div>
         </div>
 
         <button type="submit" class="btn login-btn w-100">

@@ -54,27 +54,6 @@ document.addEventListener("DOMContentLoaded", () => {
     passwordConfirmInput.addEventListener("blur", () => passwordConfirmInput.classList.remove("active"));
   }
 
-  const registrationForm = document.getElementById("registrationForm");
-  if (registrationForm) {
-    registrationForm.addEventListener("submit", (event) => {
-      validateEmail();
-      validatePasswords();
-
-      if (
-        !emailInput.classList.contains("valid") ||
-        !passwordInput.classList.contains("valid") ||
-        !passwordConfirmInput.classList.contains("valid")
-      ) {
-        event.preventDefault();
-        alert("Email of wachtwoord is ongeldig");
-      } else {
-        event.preventDefault();
-        window.location.href = "../loginPage/login.html?registered=success";
-      }
-    });
-  }
-
-  const pwInput = document.getElementById("regPassword");
   const reqUppercase = [].concat(
     document.getElementById("req-uppercase"),
     document.getElementById("req-uppercase-mobile")
@@ -92,6 +71,51 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("req-digit-mobile")
   );
 
+  function requirementMet(checkboxArray) {
+    return checkboxArray.some(el => el && el.checked);
+  }
+
+  const registrationForm = document.getElementById("registrationForm");
+  if (registrationForm) {
+    registrationForm.addEventListener("submit", (event) => {
+      validateEmail();
+      validatePasswords();
+
+      if (
+        !emailInput.classList.contains("valid") ||
+        !passwordInput.classList.contains("valid") ||
+        !passwordConfirmInput.classList.contains("valid")
+      ) {
+        event.preventDefault();
+        alert("Email of wachtwoord is ongeldig");
+        return;
+      }
+
+      const passwordValue = passwordInput.value;
+      const passwordComplexityOK =
+        /[A-Z]/.test(passwordValue) &&
+        passwordValue.length >= 8 && 
+        /[^A-Za-z0-9]/.test(passwordValue) &&
+        /[0-9]/.test(passwordValue);
+
+      if (
+        !passwordComplexityOK ||
+        !requirementMet(reqUppercase) ||
+        !requirementMet(reqLength) ||
+        !requirementMet(reqSpecial) ||
+        !requirementMet(reqDigit)
+      ) {
+        event.preventDefault();
+        alert("Wachtwoord voldoet niet aan de vereisten");
+        return;
+      }
+
+      event.preventDefault();
+      window.location.href = "../loginPage/login.html?registered=success";
+    });
+  }
+
+  const pwInput = document.getElementById("regPassword");
   if (pwInput) {
     pwInput.addEventListener("input", () => {
       const value = pwInput.value;
@@ -109,16 +133,17 @@ document.addEventListener("DOMContentLoaded", () => {
       });
     });
   }
+
   document.querySelectorAll('.toggle-password').forEach(function(toggle) {
     toggle.addEventListener('click', function() {
       const targetId = this.getAttribute('data-target');
       const input = document.getElementById(targetId);
       if (input.type === "password") {
         input.type = "text";
-        this.innerHTML = '<i class="bi bi-eye-slash"></i>';
+        this.innerHTML = '<i class="bi bi-eye"></i>';
       } else {
         input.type = "password";
-        this.innerHTML = '<i class="bi bi-eye"></i>';
+        this.innerHTML = '<i class="bi bi-eye-slash"></i>';
       }
     });
   });

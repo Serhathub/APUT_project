@@ -1,6 +1,8 @@
 document.addEventListener("DOMContentLoaded", () => {
   // --- Games ---
-  let isLoggedIn = localStorage.getItem("isLoggedIn") === "true";
+  function getIsLoggedIn() {
+    return localStorage.getItem("isLoggedIn") === "true";
+  }
   
   const gameOptions = document.querySelectorAll(".game-option");
 
@@ -11,7 +13,7 @@ document.addEventListener("DOMContentLoaded", () => {
         event.preventDefault();
         document.getElementById("popup").style.display = "flex";
       } else {
-        if (!isLoggedIn) {
+        if (!getIsLoggedIn()) {
           event.preventDefault();
           let loginPromptModal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
           loginPromptModal.show();
@@ -87,5 +89,14 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelProfileBtn.style.display = "none";
       editProfileBtn.style.display = "inline-block";
     });
-  }
+
+    const logoutBtn = document.getElementById("logout-btn");
+    if (logoutBtn) {
+      logoutBtn.addEventListener("click", (e) => {
+        e.preventDefault();
+        localStorage.setItem("isLoggedIn", "false");
+        window.location.href = logoutBtn.getAttribute("href");
+      });
+    }
+}
 });
