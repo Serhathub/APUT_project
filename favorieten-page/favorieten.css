@@ -209,7 +209,6 @@ h2 {
     .list-group-item {
         display: flex;
         align-items: center;
-        justify-content: space-between;
         background-color: #07F468;
         padding: 15px;
         border-radius: 10px;
@@ -218,14 +217,14 @@ h2 {
     }
 
     .list-group-item img {
-        width: 50px; 
-        height: 50px; 
+        width: 80px; 
+        height: 80px; 
     }
 
     .list-group-item span {
         font-size: 30px;
         font-weight: bold;
-        
+        text-align: left;
     }
 
     .list-group-item button {
@@ -247,10 +246,23 @@ h2 {
     .stadium-image {
         visibility: hidden;
     }
+    .open-club {
+        margin-left: auto; 
+    }
 }
 @media (max-width: 360px) {
     .mb-3 {
         align-items: start;
         flex-direction: column;
     }
+    
+    .list-group-item img {
+        width: 50px; 
+        height: 50px; 
+    }
+    .club-name {
+        flex-grow: 1; 
+        text-align: left;
+    }
+      
 }
