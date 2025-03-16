@@ -1,4 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM volledig geladen");
   const emailInput = document.getElementById("regEmail");
   const passwordInput = document.getElementById("regPassword");
   const passwordConfirmInput = document.getElementById("regPasswordConfirm");
@@ -78,6 +79,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const registrationForm = document.getElementById("registrationForm");
   if (registrationForm) {
     registrationForm.addEventListener("submit", (event) => {
+      console.log("Formulier submit event gestart");
       validateEmail();
       validatePasswords();
 
@@ -87,7 +89,8 @@ document.addEventListener("DOMContentLoaded", () => {
         !passwordConfirmInput.classList.contains("valid")
       ) {
         event.preventDefault();
-        alert("Email of wachtwoord is ongeldig");
+        console.log("Validatie mislukt: Email of wachtwoord ongeldig");
+        showErrorMessage("Email of wachtwoord ongeldig");
         return;
       }
 
@@ -106,14 +109,40 @@ document.addEventListener("DOMContentLoaded", () => {
         !requirementMet(reqDigit)
       ) {
         event.preventDefault();
-        alert("Wachtwoord voldoet niet aan de vereisten");
+        console.log("Validatie mislukt: Wachtwoord voldoet niet aan de vereisten");
+        showErrorMessage("Wachtwoord voldoet niet aan de vereisten");
         return;
       }
 
+      console.log("Formulier succesvol gevalideerd, redirecten...");
       event.preventDefault();
       window.location.href = "../loginPage/login.html?registered=success";
     });
   }
+
+  function showErrorMessage(message) {
+    console.log("showErrorMessage aangeroepen met message:", message);
+    let errorMessage = document.querySelector(".error-message");
+    if (!errorMessage) {
+      errorMessage = document.createElement("div");
+      errorMessage.classList.add("error-message");
+      errorMessage.style.color = "red";
+      errorMessage.style.textAlign = "center";
+      errorMessage.style.marginBottom = "10px";
+      errorMessage.textContent = message;
+      console.log("Foutmelding element aangemaakt:", errorMessage);
+      const submitButton = registrationForm.querySelector("button[type='submit']");
+      registrationForm.insertBefore(errorMessage, submitButton);
+      console.log("Foutmelding toegevoegd voor de submit button");
+      setTimeout(() => {
+        console.log("Foutmelding verwijderd na 3 seconden");
+        errorMessage.remove();
+      }, 3000);
+    } else {
+      console.log("Er is al een foutmelding aanwezig.");
+    }
+  }
+  
 
   const pwInput = document.getElementById("regPassword");
   if (pwInput) {

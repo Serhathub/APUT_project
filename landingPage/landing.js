@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // --- Games ---
   function getIsLoggedIn() {
     return localStorage.getItem("isLoggedIn") === "true";
   }
@@ -29,7 +28,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // --- Profiel ---
   const editProfileBtn = document.getElementById("editProfileBtn");
   const saveProfileBtn = document.getElementById("saveProfileBtn");
   const cancelProfileBtn = document.getElementById("cancelProfileBtn");
@@ -89,8 +87,9 @@ document.addEventListener("DOMContentLoaded", () => {
       cancelProfileBtn.style.display = "none";
       editProfileBtn.style.display = "inline-block";
     });
+  }
 
-    const logoutBtn = document.getElementById("logout-btn");
+  const logoutBtn = document.getElementById("logout-btn");
     if (logoutBtn) {
       logoutBtn.addEventListener("click", (e) => {
         e.preventDefault();
@@ -98,5 +97,4 @@ document.addEventListener("DOMContentLoaded", () => {
         window.location.href = logoutBtn.getAttribute("href");
       });
     }
-}
 });
