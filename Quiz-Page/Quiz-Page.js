@@ -10,16 +10,21 @@ const closepopUpbutton = document.getElementById('closepopUp')
 const realMadridLogo = document.getElementById('realMadridLogo');
 
 options.forEach(option => {
-    option.addEventListener('click', function() {
-        if (this.textContent !== correctAnswer) {
-            hearts[heartCount - 1].classList.add('hidden');
-            heartCount--;
-        }
-        if (heartCount ===0) {
-            gameOverPopUp.style.display = 'flex';
-            realMadridLogo.style.display = 'none';
-        }
-    });
+  option.addEventListener("click", function () {
+      if (this.textContent === correctAnswer) {
+          correctPopUp.style.display = "flex";
+      } else {
+          if (heartCount > 0) { 
+              heartCount--;
+              hearts[heartCount].classList.add("hidden"); 
+          }
+      }
+
+      if (heartCount === 0) {
+          gameOverPopUp.style.display = "flex";
+          realMadridLogo.style.display = "none";
+      }
+  });
 });
 
 skipButton.addEventListener('click', function() {
@@ -38,6 +43,7 @@ closepopUpbutton.addEventListener('click', function(){
     window.location.href = 'Quiz-Page.html'
 })
 
+document.addEventListener("DOMContentLoaded", function () {
 const editProfileBtn = document.getElementById("editProfileBtn");
      const saveProfileBtn = document.getElementById("saveProfileBtn");
      const cancelProfileBtn = document.getElementById("cancelProfileBtn");
@@ -97,3 +103,22 @@ const editProfileBtn = document.getElementById("editProfileBtn");
          cancelProfileBtn.style.display = "none";
          editProfileBtn.style.display = "inline-block";
        })};
+       const correctPopUp = document.createElement("div");
+correctPopUp.id = "correctPopUp";
+correctPopUp.classList.add("popUp");
+correctPopUp.innerHTML = `
+    <div class="popUpcontent">
+        <h2>Goed gedaan!</h2>
+        <p>Je hebt het juiste antwoord gekozen!</p>
+        <button id="closeCorrectPopUp" class="closebutton">Sluit</button>
+    </div>
+`;
+document.body.appendChild(correctPopUp);
+
+const closeCorrectPopUpButton = document.getElementById("closeCorrectPopUp");
+
+closeCorrectPopUpButton.addEventListener("click", function () {
+    correctPopUp.style.display = "none";
+});
+
+      });
