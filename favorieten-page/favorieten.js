@@ -20,10 +20,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 oprichting: 1899,
                 coach: "Xavi Hernández",
                 league: "La Liga",
-                squad: [
-                    "Marc-André ter Stegen", "Jules Koundé", "Alejandro Balde", "Ronald Araujo", "Andreas Christensen",
-                    "Frenkie de Jong", "Gavi", "Pedri", "Robert Lewandowski", "Ansu Fati", "Lamine Yamal"
-                ],
+                rivalry: "Real Madrid",
                 stadium: "Camp Nou",
                 stadiumImage: "./assets/Barcelona_Stadium.jpg",
                 country: "Spanje"
@@ -35,7 +32,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 oprichting: 1970,
                 coach: "Christophe Galtier",
                 league: "Ligue 1",
-                squad: ["Donnarumma", "Hakimi", "Marquinhos", "Ramos", "Nuno Mendes", "Verratti", "Vitinha", "Ruiz", "Mbappé", "Neymar", "Messi"],
+                rivalry: "Olympique de Marseille",
                 stadium: "Parc des Princes",
                 stadiumImage: "./assets/PSG_Stadium.jpg",
                 country: "Frankrijk"
@@ -47,7 +44,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 oprichting: 1902,
                 coach: "Carlo Ancelotti",
                 league: "La Liga",
-                squad: ["Courtois", "Carvajal", "Militão", "Alaba", "Mendy", "Modric", "Tchouaméni", "Kroos", "Vinicius Jr", "Benzema", "Rodrygo"],
+                rivalry: "FC Barcelona",
                 stadium: "Santiago Bernabéu",
                 stadiumImage: "./assets/RealMadrid_Stadium.jpg",
                 country: "Spanje"
@@ -59,7 +56,7 @@ document.addEventListener("DOMContentLoaded", function () {
                 oprichting: 1886,
                 coach: "Mikel Arteta",
                 league: "Premier League",
-                squad: ["Ramsdale", "White", "Saliba", "Gabriel", "Zinchenko", "Partey", "Odegaard", "Xhaka", "Saka", "Jesus", "Martinelli"],
+                rivalry: "Tottenham Hotspur",
                 stadium: "Emirates Stadium",
                 stadiumImage: "./assets/Arsenal_Stadium.jpg",
                 country: "Engeland"
@@ -71,35 +68,59 @@ document.addEventListener("DOMContentLoaded", function () {
         if (selectedClub) {
             let seenCount = seenCounts[club] || 0;
             clubContent.innerHTML = `
-                <div class="club-detail-box">
-                    <div class="club-header">
-                        <div>
-                            <p><strong>Aantal keer LIVE gezien:</p>
-                            <h3 id="detail-seen-count">${seenCount}</h3> 
-                            <button class="btn btn-dark" onclick="incrementCount('${club}')">Gezien</button>
-                            <h2 class="mt-3">${selectedClub.name}</h2>
-                        </div>
-                        <img src="${selectedClub.logo}" alt="${selectedClub.name}">
+            <div class="club-detail-box">
+                <div class="club-header">
+                    <div>
+                        <p><strong>Aantal keer LIVE gezien:</strong></p>
+                        <h3 id="detail-seen-count">${seenCount}</h3> 
+                        <button class="btn btn-dark" onclick="incrementCount('${club}')">Gezien</button>
+
                     </div>
-                    <div class="club-details" style="">
-                        <div style="flex: 1; padding-right: 20px;">
-                            <p><strong><u>Club ratings:</u></strong> ${selectedClub.clubRating}</p>
-                            <p><strong><u>Oprichting:</u></strong> ${selectedClub.oprichting}</p>
-                            <p><strong><u>Coach:</u></strong> ${selectedClub.coach}</p>
-                            <p><strong><u>League:</u></strong> ${selectedClub.league}</p>
-                            <h4><strong><u>Elftal:</u></strong></h4>
-                            <ol>
-                                ${selectedClub.squad.map(player => `<li>${player}</li>`).join("")}
-                            </ol>
-                            <p><strong><u>Stadium:</u></strong> ${selectedClub.stadium}</p>
-                            <p><strong><u>Land:</u></strong> ${selectedClub.country}</p>
-                        </div>
-                        <div>
-                            <img src="${selectedClub.stadiumImage}" alt="${selectedClub.stadium}" class="stadium-image">
-                        </div>
-                        
+                    <div><h2 class="fs-1">${selectedClub.name}</h2></div>
+                    <div class="club-logo">
+                    <img src="${selectedClub.logo}" alt="${selectedClub.name}" >
                     </div>
                 </div>
+
+                <div class="club-details">
+                
+                    <table class="table table-bordered table-dark">
+                        <tbody>
+                            <tr>
+                                <td><strong>Club ratings:</strong></td>
+                                <td>${selectedClub.clubRating}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Oprichting:</strong></td>
+                                <td>${selectedClub.oprichting}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Coach:</strong></td>
+                                <td>${selectedClub.coach}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>League:</strong></td>
+                                <td>${selectedClub.league}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Rival:</strong></td>
+                                <td>${selectedClub.rivalry}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Stadium:</strong></td>
+                                <td>${selectedClub.stadium}</td>
+                            </tr>
+                            <tr>
+                                <td><strong>Land:</strong></td>
+                                <td>${selectedClub.country}</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                    <div>
+                        <img src="${selectedClub.stadiumImage}" alt="${selectedClub.stadium}" class="stadium-image">
+                    </div>
+                </div>
+            </div>
             `;
             document.querySelector(".mb-3").classList.add("d-none");
             clubList.classList.add("d-none");

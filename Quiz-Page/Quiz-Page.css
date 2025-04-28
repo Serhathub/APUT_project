@@ -5,11 +5,16 @@ body::before{
     left: -20px;
     right: -20px;
     bottom: -20px;
-    background: url("./Assets/fifaAchtergrond.avif") no-repeat center center;
+    background: url(".//Assets/fifaachtergrond.jpg") no-repeat center center;
     background-size: cover;
     filter: blur(5px);
     z-index: -1;
 }
+html, body {
+    overflow: hidden;
+    height: 100%;
+}
+
 
 .container {
     text-align: center;
@@ -53,7 +58,7 @@ body::before{
 }
 
 .hint {
-    margin-bottom: 20px;
+    margin-bottom: 5px;
     margin-top: 15px;
     border-radius: 10px;
     padding: 5px;
@@ -325,7 +330,7 @@ body::before{
         width: 100%;
         text-align: center;
         font-size: 16px;
-        padding: 10px;
+        padding: 2px;
         margin-bottom: 125px;
     }
 
@@ -335,7 +340,7 @@ body::before{
         text-align: center;
         padding: 8px;
         margin-top: -150px;
-        font-size: 20px;
+        font-size: 17px;
     }
 
     .quiz-content {
@@ -355,10 +360,10 @@ body::before{
     }
 
     .option {
-        padding: 10px;
-        font-size: 14px;
+        padding: 8px;
         width: 100%;
-        font-size: 20px;
+        font-size: 18px;
+        margin-top: 25px;
     }
 
     .hearts {
