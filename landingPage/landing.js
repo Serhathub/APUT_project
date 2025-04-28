@@ -7,7 +7,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
   gameOptions.forEach(option => {
     option.addEventListener("click", function (event) {
-      const gameName = this.querySelector(".game-text").textContent.trim();
+      const gameName = this.dataset.game;
       if (gameName !== "Fifa Game") {
         event.preventDefault();
         document.getElementById("popup").style.display = "flex";
