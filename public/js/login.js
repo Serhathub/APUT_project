@@ -35,7 +35,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
       if (username === validusername && password === validPassword) {
         localStorage.setItem("isLoggedIn", "true");
-        window.location.href = "../landingpage/landing.html?registered=success";
+        window.location.href = "/";
       } else {
         let errorMessage = document.querySelector(".error-message");
         if (!errorMessage) {
