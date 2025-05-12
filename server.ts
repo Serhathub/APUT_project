@@ -33,6 +33,30 @@ app.get("/",(req,res)=>{
     res.render("landing"); //initial landingpagina
 })
 
+app.get('/login', (req, res) => {
+  res.render('login', { pageTitle: 'Login' });
+});
+
+app.get('/registratie', (req, res) => {
+  res.render('registratie', { pageTitle: 'Registratie' });
+});
+
+app.get('/Quiz-Page', (req, res) => {
+  res.render('Quiz-Page', { pageTitle: 'FIFA Quiz_Page' });
+});
+
+app.get('/favorieten', (req, res) => {
+  res.render('favorieten', { pageTitle: 'Favorieten' });
+});
+
+app.get('/favorieteleagues', (req, res) => {
+  res.render('favorieteleagues', { pageTitle: 'FavorieteLeague' });
+});
+
+app.get('/blacklistedPage', (req, res) => {
+  res.render('blacklistedPage', { pageTitle: 'Blacklisted' });
+});
+
 // test data
 app.get('/get-data', async (req, res) => {
     try {
