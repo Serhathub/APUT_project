@@ -7,7 +7,7 @@ const app = express();
 const PORT = 3000;
 const uri = "mongodb+srv://serhatkaya:j5j7JmHajuG4su9l@aputprojectdb.08sfsel.mongodb.net/?retryWrites=true&w=majority&appName=APUTprojectDB";
 const client = new MongoClient(uri);
-const api_token="8d646a2f-c1c9-1e82-c991-1307bfbc7bb0";
+const api_token="3f6a9e47-cf22-e54f-dc92-8c03a2e09938";
 let database:any;
 
 app.set("view engine", "ejs");
@@ -70,25 +70,32 @@ app.get('/get-data', async (req, res) => {
 
 // test data met api
 app.get('/clubs', async (req, res) => {
-    try {
-      const response = await fetch('https://api.futdatabase.com/api/clubs', {
-        method: 'GET',
-        headers: {
-          'Authorization': `Bearer ${api_token}` 
-        }
-      });
-      console.log(`Response status: ${response.status}`);
-      console.log(`Response body: ${await response.text()}`);
-      if (!response.ok) {
-        throw new Error('Netwerk response was niet ok');
+  try {
+    const response = await fetch('https://api.futdatabase.com/api/clubs', {
+      method: 'GET',
+      headers: {
+        'X-AUTH-TOKEN': api_token
       }
-  
-      const clubs = await response.json();  
-      res.json(clubs);
-    } catch (error) {
-      res.status(500).json({error:` Er is een fout opgetreden bij het ophalen van de clubs: `});
+    });
+
+    const textBody = await response.text();
+    console.log('Response status:', response.status);
+    console.log('Response body:', textBody);
+
+    let data;
+    try {
+      data = JSON.parse(textBody);
+    } catch(parseErr) {
+      console.error('Kon JSON niet parsen:', parseErr);
+      throw new Error('Invalid JSON response');
     }
-  });
+
+    res.json(data);
+  } catch (err) {
+    console.error('Fetch error:', err);
+    res.status(500).json({ error: 'Er is een fout opgetreden bij het ophalen van de clubs.' });
+  }
+});
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
   });
