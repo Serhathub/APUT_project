@@ -3,6 +3,7 @@
     "start": "nodemon server.ts"
   },
   "devDependencies": {
+    "@types/bcrypt": "^5.0.2",
     "@types/ejs": "^3.1.5",
     "@types/express": "^5.0.1",
     "@types/node": "^22.15.3",
@@ -11,6 +12,7 @@
     "typescript": "^5.8.3"
   },
   "dependencies": {
+    "bcrypt": "^6.0.0",
     "ejs": "^3.1.10",
     "express": "^5.1.0",
     "mongodb": "^6.16.0",

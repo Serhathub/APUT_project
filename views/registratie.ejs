@@ -34,15 +34,21 @@
 
       <hr class="title-divider mb-4" />
 
-    <form id="registrationForm">
+      <% if (typeof error !== 'undefined') { %>
+        <div class="alert alert-danger text-center mb-3">
+          <%= error %>
+        </div>
+      <% } %>
+
+    <form id="registrationForm" action="/registratie" method="POST">
       <div class="row">
         <div class="col-md-6 mb-3">
           <label for="regUsername" class="form-label">Gebruikersnaam:</label>
-          <input type="text" class="form-control" id="regUsername" placeholder="Voer je gebruikersnaam in">
+          <input type="text" class="form-control" id="regUsername" name="username" placeholder="Voer je gebruikersnaam in">
         </div>
         <div class="col-md-6 mb-3">
           <label for="regEmail" class="form-label">Email:</label>
-          <input type="email" class="form-control" id="regEmail" placeholder="Voer je email in">
+          <input type="email" class="form-control" id="regEmail" name="email" placeholder="Voer je email in">
         </div>
       </div>
       <div class="row">
@@ -50,7 +56,7 @@
           <div class="mb-3">
             <label for="regPassword" class="form-label">Wachtwoord:</label>
             <div class="input-group">
-              <input type="password" class="form-control" id="regPassword" placeholder="Voer je wachtwoord in">
+              <input type="password" class="form-control" id="regPassword" name="password" placeholder="Voer je wachtwoord in">
               <span class="input-group-text toggle-password" data-target="regPassword">
                 <i class="bi bi-eye-slash"></i>
               </span>
@@ -62,7 +68,7 @@
           <div class="mb-3">
             <label for="regPasswordConfirm" class="form-label">Wachtwoord herhalen:</label>
             <div class="input-group">
-              <input type="password" class="form-control" id="regPasswordConfirm" placeholder="Herhaal je wachtwoord">
+              <input type="password" class="form-control" id="regPasswordConfirm" name="passwordConfirm" placeholder="Herhaal je wachtwoord">
               <span class="input-group-text toggle-password" data-target="regPasswordConfirm">
                 <i class="bi bi-eye-slash"></i>
               </span>

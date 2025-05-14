@@ -2,6 +2,8 @@ import express from "express";
 import ejs from "ejs";
 import path from "path";
 import { MongoClient } from "mongodb";
+import bcrypt from "bcrypt";
+import { error } from "console";
 
 const app = express();
 const PORT = 3000;
@@ -28,6 +30,8 @@ async function main() {
 main();
 
 app.use(express.json());
+
+app.use(express.urlencoded({ extended: true}));
 
 app.get("/",(req,res)=>{
     res.render("landing"); //initial landingpagina
@@ -99,3 +103,45 @@ app.get('/clubs', async (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
   });
+
+const SALT_ROUNDS = 10;
+
+app.post('/registratie', async (req, res) => {
+  try {
+    const { username, email, password } = req.body;
+
+    if(!username || !email || !password) {
+      return res.status(400).render('registratie', {
+        pageTitle: 'Registratie',
+        error: 'Vul alle verplichte velden in.'
+      });
+    }
+
+    const userCol = database.collection('users');
+    const exists = await userCol.findOne({ email });
+
+    if(exists) {
+      return res.status(409).render('registratie', {
+        pageTitle: 'Registratie',
+        error: 'Deze email is al in gebruik.'
+      });
+    }
+
+    const hash = await bcrypt.hash(password, SALT_ROUNDS);
+
+    await userCol.insertOne({
+      username,
+      email,
+      password: hash,
+      createdAt: new Date()
+    });
+
+    return res.redirect('/login?registered=success')
+  } catch (err) {
+    console.error('Registratie fout:', err);
+    return res.status(500).render('registratie', {
+      pageTitle: 'Registratie',
+      error: 'Er is iets misgegaan, probeer opnieuw.'
+    });
+  }
+});
