@@ -115,8 +115,6 @@ document.addEventListener("DOMContentLoaded", () => {
       }
 
       console.log("Formulier succesvol gevalideerd, redirecten...");
-      event.preventDefault();
-      window.location.href = "../loginPage/login.html?registered=success";
     });
   }
 
@@ -176,4 +174,11 @@ document.addEventListener("DOMContentLoaded", () => {
       }
     });
   });
+  
+  const serverErrorAlert = document.querySelector('.alert.alert-danger');
+  if (serverErrorAlert) {
+    setTimeout(() => {
+      serverErrorAlert.remove();
+    }, 3000);
+  }
 });
