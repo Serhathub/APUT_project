@@ -32,21 +32,29 @@
 
       <hr class="title-divider mb-4" />
 
-      <form>
+      <% if (typeof error !== 'undefined') { %>
+        <div class="alert alert-danger text-center mb-3">
+          <%= error %>
+        </div>
+      <% } %>
+
+      <form action="/login" method="POST" id="loginForm">
         <div class="mb-3">
           <label for="username" class="form-label">Gebruikersnaam:</label>
           <input
             type="text"
             class="form-control"
             id="username"
+            name="username"
             placeholder="Voer je gebruikersnaam in"
+            value="<%= typeof username !== 'undefined' ? username : '' %>"
           />
         </div>
 
         <div class="mb-3">
           <label for="password" class="form-label">Wachtwoord:</label>
           <div class="input-group">
-            <input type="password" class="form-control" id="password" placeholder="Voer je wachtwoord in">
+            <input type="password" class="form-control" id="password" name="password" placeholder="Voer je wachtwoord in">
             <span class="input-group-text toggle-password" data-target="password">
               <i class="bi bi-eye-slash"></i>
             </span>
