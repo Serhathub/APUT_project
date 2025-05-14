@@ -4,6 +4,14 @@ import path from "path";
 import { MongoClient } from "mongodb";
 import bcrypt from "bcrypt";
 import { error } from "console";
+import session from 'express-session';
+import 'express-session';
+
+declare module 'express-session' {
+  interface SessionData {
+    userId?: string;
+  }
+}
 
 const app = express();
 const PORT = 3000;
@@ -33,9 +41,28 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true}));
 
-app.get("/",(req,res)=>{
-    res.render("landing"); //initial landingpagina
-})
+app.use(session({
+  secret: "eenSuperGeheimeCodeVoorNu",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    secure: false,
+    sameSite: 'lax',
+  }
+}));
+
+function requireLogin(req: express.Request, res: express.Response, next: express.NextFunction) {
+  if (!req.session.userId) {
+    return res.redirect('/login');
+  }
+  next();
+}
+
+app.get("/", (req, res) => {
+  res.render("landing", {
+    userId: req.session.userId
+  });
+});
 
 app.get('/login', (req, res) => {
   res.render('login', { pageTitle: 'Login' });
@@ -45,7 +72,7 @@ app.get('/registratie', (req, res) => {
   res.render('registratie', { pageTitle: 'Registratie' });
 });
 
-app.get('/Quiz-Page', (req, res) => {
+app.get('/Quiz-Page', requireLogin, (req, res) => {
   res.render('Quiz-Page', { pageTitle: 'FIFA Quiz_Page' });
 });
 
@@ -118,12 +145,24 @@ app.post('/registratie', async (req, res) => {
     }
 
     const userCol = database.collection('users');
-    const exists = await userCol.findOne({ email });
 
-    if(exists) {
+    const usernameTaken = await userCol.findOne({ username })
+    if (usernameTaken) {
       return res.status(409).render('registratie', {
         pageTitle: 'Registratie',
-        error: 'Deze email is al in gebruik.'
+        error: 'Deze gebruikersnaam is al in gebruik.',
+        username: '',
+        email
+      });
+    }
+
+    const emailTaken = await userCol.findOne({ email });
+     if (emailTaken) {
+      return res.status(409).render('registratie', {
+        pageTitle: 'Registratie',
+        error: 'Deze email is al in gebruik.',
+        username,
+        email: ''
       });
     }
 
@@ -144,4 +183,46 @@ app.post('/registratie', async (req, res) => {
       error: 'Er is iets misgegaan, probeer opnieuw.'
     });
   }
+});
+
+app.post('/login', async (req, res) => {
+  const { username, password } = req.body;
+  
+  // Server-side validatie
+  if (!username || !password) {
+    return res.status(400).render('login', {
+      pageTitle: 'Login',
+      error: 'Vul zowel gebruikersnaam als wachtwoord in.'
+    });
+  }
+
+  const usersCol = database.collection('users');
+  const user = await usersCol.findOne({ username });
+
+  if (!user) {
+    return res.status(401).render('login', {
+      pageTitle: 'Login',
+      error: 'Onbekende gebruikersnaam.'
+    });
+  }
+
+  const match = await bcrypt.compare(password, user.password);
+  if (!match) {
+    return res.status(401).render('login', {
+      pageTitle: 'Login',
+      error: 'Wachtwoord klopt niet.',
+      username
+    });
+  }
+
+  req.session.userId = user._id;
+  return res.redirect('/');
+});
+
+app.post('/logout', (req, res) => {
+  req.session.destroy(err => {
+    if (err) console.error('Logout fout:', err);
+    res.clearCookie('connect.sid');
+    res.redirect('/login');
+  });
 });

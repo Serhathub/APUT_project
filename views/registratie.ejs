@@ -31,26 +31,40 @@
         <img src="Assets/Clubs.png" alt="Clubs foto" class="club-photo mb-3" />
 
       <h2 class="text-center registration-title mb-4">Registratie</h2>
-
       <hr class="title-divider mb-4" />
 
-      <% if (typeof error !== 'undefined') { %>
-        <div class="alert alert-danger text-center mb-3">
-          <%= error %>
-        </div>
-      <% } %>
+    <% if (typeof error !== 'undefined' && error) { %>
+      <div class="alert alert-danger text-center mb-3">
+        <%= error %>
+      </div>
+    <% } %>
 
     <form id="registrationForm" action="/registratie" method="POST">
       <div class="row">
         <div class="col-md-6 mb-3">
           <label for="regUsername" class="form-label">Gebruikersnaam:</label>
-          <input type="text" class="form-control" id="regUsername" name="username" placeholder="Voer je gebruikersnaam in">
+          <input
+            type="text"
+            class="form-control"
+            id="regUsername"
+            name="username"
+            placeholder="Voer je gebruikersnaam in"
+            value="<%= typeof username !== 'undefined' ? username : '' %>"
+            >
         </div>
         <div class="col-md-6 mb-3">
           <label for="regEmail" class="form-label">Email:</label>
-          <input type="email" class="form-control" id="regEmail" name="email" placeholder="Voer je email in">
+          <input
+            type="email"
+            class="form-control"
+            id="regEmail"
+            name="email"
+            placeholder="Voer je email in"
+            value="<%= typeof email !== 'undefined' ? email : '' %>"
+            >
         </div>
       </div>
+
       <div class="row">
         <div class="col-md-6">
           <div class="mb-3">

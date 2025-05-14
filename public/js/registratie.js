@@ -1,5 +1,4 @@
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM volledig geladen");
   const emailInput = document.getElementById("regEmail");
   const passwordInput = document.getElementById("regPassword");
   const passwordConfirmInput = document.getElementById("regPasswordConfirm");
@@ -79,7 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const registrationForm = document.getElementById("registrationForm");
   if (registrationForm) {
     registrationForm.addEventListener("submit", (event) => {
-      console.log("Formulier submit event gestart");
       validateEmail();
       validatePasswords();
 
@@ -89,7 +87,6 @@ document.addEventListener("DOMContentLoaded", () => {
         !passwordConfirmInput.classList.contains("valid")
       ) {
         event.preventDefault();
-        console.log("Validatie mislukt: Email of wachtwoord ongeldig");
         showErrorMessage("Email of wachtwoord ongeldig");
         return;
       }
@@ -109,12 +106,9 @@ document.addEventListener("DOMContentLoaded", () => {
         !requirementMet(reqDigit)
       ) {
         event.preventDefault();
-        console.log("Validatie mislukt: Wachtwoord voldoet niet aan de vereisten");
         showErrorMessage("Wachtwoord voldoet niet aan de vereisten");
         return;
       }
-
-      console.log("Formulier succesvol gevalideerd, redirecten...");
     });
   }
 
@@ -133,7 +127,6 @@ document.addEventListener("DOMContentLoaded", () => {
       registrationForm.insertBefore(errorMessage, submitButton);
       console.log("Foutmelding toegevoegd voor de submit button");
       setTimeout(() => {
-        console.log("Foutmelding verwijderd na 3 seconden");
         errorMessage.remove();
       }, 3000);
     } else {

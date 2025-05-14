@@ -1,8 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  function getIsLoggedIn() {
-    return localStorage.getItem("isLoggedIn") === "true";
-  }
-  
+
   const gameOptions = document.querySelectorAll(".game-option");
 
   gameOptions.forEach(option => {
@@ -11,12 +8,11 @@ document.addEventListener("DOMContentLoaded", () => {
       if (gameName !== "Fifa Game") {
         event.preventDefault();
         document.getElementById("popup").style.display = "flex";
-      } else {
-        if (!getIsLoggedIn()) {
-          event.preventDefault();
-          let loginPromptModal = new bootstrap.Modal(document.getElementById('loginPromptModal'));
-          loginPromptModal.show();
-        }
+      }
+      
+      if (!isLoggedIn) {
+        event.preventDefault();
+        new bootstrap.Modal(document.getElementById('loginPromptModal')).show();
       }
     });
   });
@@ -89,12 +85,10 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  const logoutBtn = document.getElementById("logout-btn");
-    if (logoutBtn) {
-      logoutBtn.addEventListener("click", (e) => {
-        e.preventDefault();
-        localStorage.setItem("isLoggedIn", "false");
-        window.location.href = logoutBtn.getAttribute("href");
-      });
-    }
+  const logoutForm = document.querySelector('form[action="/logout"]');
+    if (logoutForm) {
+      logoutForm.addEventListener('submit', () => {
+      localStorage.setItem("isLoggedIn", "false");
+    });
+  }
 });
