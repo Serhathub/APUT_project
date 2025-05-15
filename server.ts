@@ -1,7 +1,7 @@
 import express from "express";
 import ejs from "ejs";
 import path from "path";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import { error } from "console";
 import session from 'express-session';
@@ -58,9 +58,28 @@ function requireLogin(req: express.Request, res: express.Response, next: express
   next();
 }
 
-app.get("/", (req, res) => {
+app.get("/", async (req, res) => {
+  let user = null;
+  let maskedPassword = "";
+
+  if (req.session.userId) {
+    const usersCol = database.collection("users");
+    const _id = typeof req.session.userId === "string"
+      ? new ObjectId(req.session.userId)
+      : req.session.userId;
+
+    user = await usersCol.findOne({ _id });
+    if (user && user.password) {
+      const maxStars = 15;
+      const starCount = Math.min(user.password.length, maxStars);
+      maskedPassword = "*".repeat(starCount);
+    }
+  }
+
   res.render("landing", {
-    userId: req.session.userId
+    user,
+    isLoggedIn: !!req.session.userId,
+    maskedPassword
   });
 });
 
@@ -127,6 +146,7 @@ app.get('/clubs', async (req, res) => {
     res.status(500).json({ error: 'Er is een fout opgetreden bij het ophalen van de clubs.' });
   }
 });
+
 app.listen(PORT, () => {
     console.log(`Server running at http://localhost:${PORT}`);
   });
@@ -225,4 +245,29 @@ app.post('/logout', (req, res) => {
     res.clearCookie('connect.sid');
     res.redirect('/login');
   });
+});
+
+app.post("/profile", requireLogin, async (req, res) => {
+  const { username, email } = req.body;
+  const usersCol = database.collection("users");
+  const _id = typeof req.session.userId === "string"
+    ? new ObjectId(req.session.userId)
+    : req.session.userId;
+
+  const conflict = await usersCol.findOne({
+    _id: { $ne: _id },
+    $or: [{ username }, { email }]
+  });
+  if (conflict) {
+    return res.status(409).render("landing", {
+      user: { _id, username, email },
+      isLoggedIn: true,
+      error: conflict.username === username
+        ? "Gebruikersnaam al in gebruik"
+        : "Email al in gebruik"
+    });
+  }
+
+  await usersCol.updateOne({ _id }, { $set: { username, email } });
+  res.redirect("/");
 });

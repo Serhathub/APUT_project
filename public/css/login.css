@@ -14,7 +14,7 @@ body::before {
   left: -20px;
   right: -20px;
   bottom: -20px;
-  background: url("Assets/fifaAchtergrond.png") no-repeat center center;
+  background: url("/Assets/fifaAchtergrond.png") no-repeat center center;
   background-size: cover;
   filter: blur(5px);
   z-index: -1;
