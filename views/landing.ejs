@@ -19,6 +19,10 @@
 </head>
 <body>
   <header>
+    <script>
+      window.isLoggedIn = <%- JSON.stringify(isLoggedIn) %>;
+      window.currentUser  = <%- JSON.stringify(user || {}) %>;
+    </script>
     <nav class="navbar navbar-custom">
       <div class="container-fluid d-flex justify-content-between align-items-center">
         <div class="placeholder"></div>
@@ -96,26 +100,44 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Sluiten"></button>
           </div>
           <div class="modal-body">
-            <div class="container">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="mb-3">
+            <form id="profileForm" action="/profile" method="POST">
+              <div class="container">
+                <div class="row">
+                  <div class="col-md-6 mb-3">
                     <label for="profileUsername" class="form-label">Gebruikersnaam:</label>
-                    <input type="text" class="form-control" id="profileUsername" value="TestTest12" readonly>
+                    <input
+                      name="username"
+                      type="text"
+                      class="form-control"
+                      id="profileUsername"
+                      value="<%= user ? user.username : '' %>"
+                      readonly
+                    />
                   </div>
-                  <div class="mb-3">
+                  <div class="col-md-6 mb-3">
                     <label for="profileEmail" class="form-label">Email:</label>
-                    <input type="email" class="form-control" id="profileEmail" value="Test@Test.com" readonly>
+                    <input
+                      name="email"
+                      type="email"
+                      class="form-control"
+                      id="profileEmail"
+                      value="<%= user ? user.email : '' %>"
+                      readonly
+                    />
                   </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
+                  <div class="col-md-6 mb-3">
                     <label for="profilePassword" class="form-label">Wachtwoord:</label>
-                    <input type="password" class="form-control" id="profilePassword" value="**********" readonly>
+                    <input
+                      type="password"
+                      class="form-control"
+                      id="profilePassword"
+                      value="<%= maskedPassword %>"
+                      readonly
+                    >
                   </div>
                 </div>
               </div>
-            </div>
+            </form>
           </div>
           <div class="modal-footer">
             <button id="editProfileBtn" type="button" class="btn btn-secondary">Bewerken</button>
@@ -145,10 +167,6 @@
     </div>
   </main>
 
-
-  <script>
-  window.isLoggedIn = <%- JSON.stringify(!!userId) %>;
-</script>
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
   ></script>
