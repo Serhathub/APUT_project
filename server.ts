@@ -1,11 +1,14 @@
 import express from "express";
 import ejs from "ejs";
 import path from "path";
-import { MongoClient } from "mongodb";
+import { MongoClient, ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import { error } from "console";
-import session from 'express-session';
+import session from './session';
 import 'express-session';
+import { secureMiddleware } from "./secureMiddleware";
+import { userInfo } from "os";
+import { User } from "./types";
 
 declare module 'express-session' {
   interface SessionData {
@@ -15,16 +18,38 @@ declare module 'express-session' {
 
 const app = express();
 const PORT = 3000;
-const uri = "mongodb+srv://serhatkaya:j5j7JmHajuG4su9l@aputprojectdb.08sfsel.mongodb.net/?retryWrites=true&w=majority&appName=APUTprojectDB";
+export const uri = "mongodb+srv://serhatkaya:j5j7JmHajuG4su9l@aputprojectdb.08sfsel.mongodb.net/?retryWrites=true&w=majority&appName=APUTprojectDB";
 const client = new MongoClient(uri);
 const api_token="3f6a9e47-cf22-e54f-dc92-8c03a2e09938";
-let database:any;
+export let database:any;
 
 app.set("view engine", "ejs");
 app.set("port", 3000);
 
 app.use(express.static(path.join(__dirname, "public")));
-
+async function fetchClubsFromAPI() {
+  try {
+    const apiToken = process.env.API_TOKEN || api_token; 
+    
+    const response = await fetch('https://api.futdatabase.com/api/clubs', {
+      method: 'GET',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-auth-token': apiToken 
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API responded with status: ${response.status}`);
+    }
+    
+    const data = await response.json();
+    return data;
+  } catch (error) {
+    console.error('Error fetching clubs from API:', error);
+    return [];
+  }
+}
 async function main() {
     try {
         await client.connect();
@@ -41,15 +66,7 @@ app.use(express.json());
 
 app.use(express.urlencoded({ extended: true}));
 
-app.use(session({
-  secret: "eenSuperGeheimeCodeVoorNu",
-  resave: false,
-  saveUninitialized: false,
-  cookie: {
-    secure: false,
-    sameSite: 'lax',
-  }
-}));
+app.use(session);
 
 function requireLogin(req: express.Request, res: express.Response, next: express.NextFunction) {
   if (!req.session.userId) {
@@ -58,10 +75,8 @@ function requireLogin(req: express.Request, res: express.Response, next: express
   next();
 }
 
-app.get("/", (req, res) => {
-  res.render("landing", {
-    userId: req.session.userId
-  });
+app.get("/", secureMiddleware, (req, res) => {
+  res.render("landing");
 });
 
 app.get('/login', (req, res) => {
@@ -72,14 +87,37 @@ app.get('/registratie', (req, res) => {
   res.render('registratie', { pageTitle: 'Registratie' });
 });
 
-app.get('/Quiz-Page', requireLogin, (req, res) => {
+app.get('/Quiz-Page', (req, res) => {
   res.render('Quiz-Page', { pageTitle: 'FIFA Quiz_Page' });
 });
 
-app.get('/favorieten', (req, res) => {
-  res.render('favorieten', { pageTitle: 'Favorieten' });
+app.get('/favorieten', secureMiddleware, async (req, res) => {
+  try {
+    const allClubs = await fetchClubsFromAPI();
+    const userCol = database.collection("users");
+    const user = await userCol.findOne({ _id: new ObjectId(req.session.userId) });
+    
+    if (!res.locals.user.favorites) {
+      await database.collection("users").updateOne(
+        { _id: new Object(req.session.userId) },
+        { $set: { favorites: [] } }
+      );
+      
+      res.locals.user.favorites = [];
+    }
+    
+    res.render('favorieten', {
+      pageTitle: 'Favorieten',
+      allClubs: allClubs,
+    });
+  } catch (error) {
+    console.error('Error loading favorites page:', error);
+    res.status(500).render('error', { 
+      pageTitle: 'Error', 
+      error: 'Er is een fout opgetreden bij het laden van de favorieten pagina.' 
+    });
+  }
 });
-
 app.get('/favorieteleagues', (req, res) => {
   res.render('favorieteleagues', { pageTitle: 'FavorieteLeague' });
 });
@@ -225,4 +263,25 @@ app.post('/logout', (req, res) => {
     res.clearCookie('connect.sid');
     res.redirect('/login');
   });
+});
+app.post('/favorieten/add', secureMiddleware, async (req, res) => {
+  try {
+    const { clubId, name, league } = req.body;
+    
+    const clubData = {
+      clubId: parseInt(clubId),
+      name: name,
+      league: parseInt(league)
+    };
+    
+    await database.collection("users").updateOne(
+      { _id: new ObjectId(req.session.userId) },
+      { $addToSet: { favorites: clubData } }
+    );
+    
+    res.redirect('/favorieten');
+  } catch (error) {
+    console.error('Error adding club to favorites:', error);
+    res.status(500).json({ error: 'Er is een fout opgetreden' });
+  }
 });

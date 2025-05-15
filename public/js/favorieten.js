@@ -153,8 +153,8 @@ document.addEventListener("DOMContentLoaded", function () {
     const emailInput = document.getElementById("profileEmail");
     const closeProfileBtn = document.getElementById("profileModal")
   
-    const originalUsername = usernameInput.value;
-    const originalEmail = emailInput.value;
+    let originalUsername = usernameInput.value;
+    let originalEmail = emailInput.value;
   
     if (editProfileBtn) {
       editProfileBtn.addEventListener("click", () => {

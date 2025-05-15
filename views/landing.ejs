@@ -18,6 +18,7 @@
   <link rel="stylesheet" href="css/landing.css" />
 </head>
 <body>
+  <p><%= user ? "Gebruiker is ingelogd: " + user.username : "Geen gebruiker" %></p>
   <header>
     <nav class="navbar navbar-custom">
       <div class="container-fluid d-flex justify-content-between align-items-center">
@@ -146,9 +147,7 @@
   </main>
 
 
-  <script>
-  window.isLoggedIn = <%- JSON.stringify(!!userId) %>;
-</script>
+  window.isLoggedIn = <%- JSON.stringify(!!user) %>;
   <script
     src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.3/dist/js/bootstrap.bundle.min.js"
   ></script>

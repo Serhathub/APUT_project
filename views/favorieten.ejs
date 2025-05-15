@@ -75,72 +75,20 @@
         </button>
       </div>
 
-      <div id="clubList" class="list-group">
-        <div class="list-group-item">
-          <img
-            src="assets/FC_BARCELONA_LOGO.png"
-            alt="FC Barcelona"
-            class="me-3"
-          />
-          <span class="club-name">FC Barcelona</span>
-          <div class="form-group d-inline">
-            <div>
-              Aantal keer LIVE gezien: <span id="count-barcelona">0</span>
-            </div>
-            <button onclick="incrementCount('barcelona')">Gezien</button>
-          </div>
-          <button
-            class="btn btn-dark float-end open-club"
-            data-club="barcelona"
-          >
-            OPEN
-          </button>
-        </div>
-        <div class="list-group-item">
-          <img src="assets/PSG_LOGO.png" alt="PSG" class="me-3" />
-          <span class="club-name">PSG</span>
-          <div class="form-group d-inline">
-            <div>Aantal keer LIVE gezien: <span id="count-psg">0</span></div>
-            <button onclick="incrementCount('psg')">Gezien</button>
-          </div>
-          <button class="btn btn-dark float-end open-club" data-club="psg">
-            OPEN
-          </button>
-        </div>
-        <div class="list-group-item">
-          <img
-            src="assets/REALMADRID_LOGO.png"
-            alt="Real Madrid"
-            class="me-3"
-          />
-          <span class="club-name">Real Madrid</span>
-          <div class="form-group d-inline">
-            <div>
-              Aantal keer LIVE gezien: <span id="count-realmadrid">0</span>
-            </div>
-            <button onclick="incrementCount('realmadrid')">Gezien</button>
-          </div>
-          <button
-            class="btn btn-dark float-end open-club"
-            data-club="realmadrid"
-          >
-            OPEN
-          </button>
-        </div>
-        <div class="list-group-item">
-          <img src="assets/ARSENAL_LOGO.png" alt="Arsenal" class="me-3" />
-          <span class="club-name">Arsenal</span>
-          <div class="form-group d-inline">
-            <div>
-              Aantal keer LIVE gezien: <span id="count-arsenal">0</span>
-            </div>
-            <button onclick="incrementCount('arsenal')">Gezien</button>
-          </div>
-          <button class="btn btn-dark float-end open-club" data-club="arsenal">
-            OPEN
-          </button>
-        </div>
-      </div>
+     <div id="clubList" class="list-group">
+  <% if (allClubs && allClubs.data && user && Array.isArray(user.favorites)) { %>
+  <% const favorites = allClubs.data.filter(club => user.favorites.includes(club.id)); %>
+  <% if (favorites.length === 0) { %>
+    <p class="text-muted">Geen favoriete clubs gevonden.</p>
+  <% } else { %>
+    <% favorites.forEach(fav => { %>
+      <div><%= fav.name %></div>
+    <% }) %>
+  <% } %>
+<% } else { %>
+  <p>Geen favoriete clubs beschikbaar.</p>
+<% } %>
+</div>
 
       <div id="clubDetail" class="container mt-5 d-none">
         <button class="btn btn-secondary mb-3" onclick="goBack()">
@@ -149,92 +97,7 @@
         <div id="clubContent" class="club-detail-box"></div>
       </div>
     </div>
-    <div
-      class="modal fade"
-      id="profileModal"
-      tabindex="-1"
-      aria-labelledby="profileModalLabel"
-      aria-hidden="true"
-    >
-      <div class="modal-dialog modal-dialog-centered modal-lg">
-        <div class="modal-content">
-          <div class="modal-header">
-            <h5 class="modal-title" id="profileModalLabel">Profielgegevens</h5>
-            <button
-              type="button"
-              class="btn-close"
-              data-bs-dismiss="modal"
-              aria-label="Sluiten"
-            ></button>
-          </div>
-          <div class="modal-body">
-            <div class="container">
-              <div class="row">
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="profileUsername" class="form-label"
-                      >Gebruikersnaam:</label
-                    >
-                    <input
-                      type="text"
-                      class="form-control"
-                      id="profileUsername"
-                      value="TestTest12"
-                      readonly
-                    />
-                  </div>
-                  <div class="mb-3">
-                    <label for="profileEmail" class="form-label">Email:</label>
-                    <input
-                      type="email"
-                      class="form-control"
-                      id="profileEmail"
-                      value="Test@Test.com"
-                      readonly
-                    />
-                  </div>
-                </div>
-                <div class="col-md-6">
-                  <div class="mb-3">
-                    <label for="profilePassword" class="form-label"
-                      >Wachtwoord:</label
-                    >
-                    <input
-                      type="password"
-                      class="form-control"
-                      id="profilePassword"
-                      value="**********"
-                      readonly
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-          <div class="modal-footer">
-            <button id="editProfileBtn" type="button" class="btn btn-secondary">
-              Bewerken
-            </button>
-            <button
-              id="cancelProfileBtn"
-              type="button"
-              class="btn btn-danger"
-              style="display: none"
-            >
-              Annuleren
-            </button>
-            <button
-              id="saveProfileBtn"
-              type="button"
-              class="btn"
-              style="display: none"
-            >
-              Opslaan
-            </button>
-          </div>
-        </div>
-      </div>
-    </div>
+    <%- include('partials/profileModal') %>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
 </html>
