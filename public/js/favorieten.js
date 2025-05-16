@@ -1,200 +1,150 @@
-document.addEventListener("DOMContentLoaded", function () {
+    const seenCounts = {};
+
+document.addEventListener("DOMContentLoaded", async function () {
     
     const clubList = document.getElementById("clubList");
     const clubDetail = document.getElementById("clubDetail");
     const clubContent = document.getElementById("clubContent");
 
-    document.querySelectorAll(".open-club").forEach(button => {
-        button.addEventListener("click", function () {
-            const club = this.getAttribute("data-club");
-            showClubDetails(club);
-        });
+  try {
+    const res = await fetch("/api/favorieten");
+    const clubs = await res.json();
+
+    if (!clubs.length) {
+      clubList.innerHTML = "<p>Je hebt nog geen favoriete clubs.</p>";
+      return;
+    }
+
+    clubList.innerHTML = "";
+
+    clubs.forEach(club => {
+      seenCounts[club.id] = club.seen || 0;
+      const item = document.createElement("div");
+      item.className = "list-group-item";
+
+      item.innerHTML = `
+        <img src="/club-logo/${club.id}" alt="${club.name}" class="me-3" />
+        <span class="club-name">${club.name}</span>
+        <div class="form-group d-inline">
+            
+            <div>Aantal keer LIVE gezien: <span id="count-${club.id}">${seenCounts[club.id]}</span></div>
+            <button onclick="incrementCount('${club.id}')">Gezien</button>
+        </div>
+        <button class="btn btn-dark float-end open-club" data-club='${JSON.stringify(club)}'>OPEN</button>
+      `;
+      clubList.appendChild(item);
     });
-    const seenCounts = {};
-    function showClubDetails(club) {
-        const clubData = {
-            barcelona: {
-                name: "FC Barcelona",
-                clubRating: "ATK: 90 MID: 85 DEF: 91",
-                logo: "assets/FC_BARCELONA_LOGO.png",
-                oprichting: 1899,
-                coach: "Xavi Hernández",
-                league: "La Liga",
-                rivalry: "Real Madrid",
-                stadium: "Camp Nou",
-                stadiumImage: "./assets/Barcelona_Stadium.jpg",
-                country: "Spanje"
-            },
-            psg: {
-                name: "Paris Saint-Germain",
-                clubRating: "ATK: 88 MID: 81 DEF: 80",
-                logo: "assets/PSG_LOGO.png",
-                oprichting: 1970,
-                coach: "Christophe Galtier",
-                league: "Ligue 1",
-                rivalry: "Olympique de Marseille",
-                stadium: "Parc des Princes",
-                stadiumImage: "./assets/PSG_Stadium.jpg",
-                country: "Frankrijk"
-            },
-            realmadrid: {
-                name: "Real Madrid",
-                clubRating: "ATK: 93 MID: 90 DEF: 91",
-                logo: "assets/REALMADRID_LOGO.png",
-                oprichting: 1902,
-                coach: "Carlo Ancelotti",
-                league: "La Liga",
-                rivalry: "FC Barcelona",
-                stadium: "Santiago Bernabéu",
-                stadiumImage: "./assets/RealMadrid_Stadium.jpg",
-                country: "Spanje"
-            },
-            arsenal: {
-                name: "Arsenal",
-                clubRating: "ATK: 82 MID: 84 DEF: 85",
-                logo: "assets/ARSENAL_LOGO.png",
-                oprichting: 1886,
-                coach: "Mikel Arteta",
-                league: "Premier League",
-                rivalry: "Tottenham Hotspur",
-                stadium: "Emirates Stadium",
-                stadiumImage: "./assets/Arsenal_Stadium.jpg",
-                country: "Engeland"
-            }
-        };
+  } catch (err) {
+    console.error("Fout bij ophalen favoriete clubs:", err);
+    clubList.innerHTML = "<p>Favorieten konden niet geladen worden.</p>";
+  }
 
-        const selectedClub = clubData[club];
-
-        if (selectedClub) {
-            let seenCount = seenCounts[club] || 0;
-            clubContent.innerHTML = `
-            <div class="club-detail-box">
-                <div class="club-header">
-                    <div>
-                        <p><strong>Aantal keer LIVE gezien:</strong></p>
-                        <h3 id="detail-seen-count">${seenCount}</h3> 
-                        <button class="btn btn-dark" onclick="incrementCount('${club}')">Gezien</button>
-
-                    </div>
-                    <div><h2 class="fs-1">${selectedClub.name}</h2></div>
-                    <div class="club-logo">
-                    <img src="${selectedClub.logo}" alt="${selectedClub.name}" >
-                    </div>
-                </div>
-
-                <div class="club-details">
-                
-                    <table class="table table-bordered table-dark">
-                        <tbody>
-                            <tr>
-                                <td><strong>Club ratings:</strong></td>
-                                <td>${selectedClub.clubRating}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Oprichting:</strong></td>
-                                <td>${selectedClub.oprichting}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Coach:</strong></td>
-                                <td>${selectedClub.coach}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>League:</strong></td>
-                                <td>${selectedClub.league}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Rival:</strong></td>
-                                <td>${selectedClub.rivalry}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Stadium:</strong></td>
-                                <td>${selectedClub.stadium}</td>
-                            </tr>
-                            <tr>
-                                <td><strong>Land:</strong></td>
-                                <td>${selectedClub.country}</td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <div>
-                        <img src="${selectedClub.stadiumImage}" alt="${selectedClub.stadium}" class="stadium-image">
-                    </div>
-                </div>
-            </div>
-            `;
-            document.querySelector(".mb-3").classList.add("d-none");
-            clubList.classList.add("d-none");
-            clubDetail.classList.remove("d-none");
-        }
+  clubList.addEventListener("click", function (e) {
+    const button = e.target.closest(".open-club");
+    if (button) {
+      const clubData = JSON.parse(button.getAttribute("data-club"));
+      showClubDetails(clubData);
     }
+  });
 
+  function showClubDetails(club) {
+    const seenCount = seenCounts[club.id] || 0;
+    clubContent.innerHTML = `
+      <div class="club-detail-box">
+        <div class="club-header">
+          <div>
+            <p><strong>Aantal keer LIVE gezien:</strong></p>
+            <h3 id="detail-seen-count">${seenCount}</h3> 
+            <button class="btn btn-dark" onclick="incrementCount('${club.id}')">Gezien</button>
+          </div>
+          <div><h2 class="fs-1">${club.name}</h2></div>
+          <div class="club-logo">
+            <img src="/club-logo/${club.id}" alt="${club.name}" class="me-3" />
+          </div>
+        </div>
+        <div class="club-details">
+          <table class="table table-bordered table-dark">
+            <tbody>
+              <tr><td><strong>Rating:</strong></td><td>${club.rating || '-'}</td></tr>
+              <tr><td><strong>Coach:</strong></td><td>${club.coach || '-'}</td></tr>
+              <tr><td><strong>Stadium:</strong></td><td>${club.stadium || '-'}</td></tr>
+              <tr><td><strong>League:</strong></td><td>${club.leagueName || '-'}</td></tr>
+              <tr><td><strong>Land:</strong></td><td>${club.country || '-'}</td></tr>
+            </tbody>
+          </table>
+          ${club.stadiumImage ? `<img src="${club.stadiumImage}" class="stadium-image" alt="${club.stadium}">` : ''}
+        </div>
+      </div>
+    `;
 
-    window.goBack = function () {
-        clubList.classList.remove("d-none");
-        clubDetail.classList.add("d-none");
-        document.querySelector(".mb-3").classList.remove("d-none");
-    };
+    document.querySelector(".mb-3").classList.add("d-none");
+    clubList.classList.add("d-none");
+    clubDetail.classList.remove("d-none");
+  }
 
-    window.incrementCount = function (club) {
-        seenCounts[club] = (seenCounts[club] || 0) + 1;
-        const countElement = document.getElementById(`count-${club}`);
-        if (countElement) {
-            countElement.innerText = seenCounts[club];
-        }
-        const detailCountElement = document.getElementById("detail-seen-count");
-        if (detailCountElement) {
-            detailCountElement.innerText = seenCounts[club];
-        }
-    };
-    const editProfileBtn = document.getElementById("editProfileBtn");
-    const saveProfileBtn = document.getElementById("saveProfileBtn");
-    const cancelProfileBtn = document.getElementById("cancelProfileBtn");
-    const usernameInput = document.getElementById("profileUsername");
-    const emailInput = document.getElementById("profileEmail");
-    const closeProfileBtn = document.getElementById("profileModal")
-  
-    const originalUsername = usernameInput.value;
-    const originalEmail = emailInput.value;
-  
-    if (editProfileBtn) {
-      editProfileBtn.addEventListener("click", () => {
-        usernameInput.readOnly = false;
-        emailInput.readOnly = false;
-        usernameInput.style.backgroundColor = "#fff";
-        emailInput.style.backgroundColor = "#fff";
-        editProfileBtn.style.display = "none";
-        cancelProfileBtn.style.display = "inline-block";
-        saveProfileBtn.style.display = "inline-block";
-      });
-    }
-  
-    if (saveProfileBtn) {
-      saveProfileBtn.addEventListener("click", () => {
-        console.log("Dummy opslaan:", usernameInput.value, emailInput.value);
-        usernameInput.readOnly = true;
-        emailInput.readOnly = true;
-        usernameInput.style.backgroundColor = "#e9e9e9";
-        emailInput.style.backgroundColor = "#e9e9e9";
-        saveProfileBtn.style.display = "none";
-        cancelProfileBtn.style.display = "none";
-        editProfileBtn.style.display = "inline-block";
-      });
-  
-      if (cancelProfileBtn) {
-        cancelProfileBtn.addEventListener("click", () => {
-          usernameInput.value = originalUsername;
-          emailInput.value = originalEmail;
-          usernameInput.readOnly = true;
-          emailInput.readOnly = true;
-          usernameInput.style.backgroundColor = "#e9e9e9";
-          emailInput.style.backgroundColor = "#e9e9e9";
-          saveProfileBtn.style.display = "none";
-          cancelProfileBtn.style.display = "none";
-          editProfileBtn.style.display = "inline-block";
-        });
-      }
-  
-      closeProfileBtn.addEventListener("hidden.bs.modal", function() {
+  window.goBack = function () {
+    clubList.classList.remove("d-none");
+    clubDetail.classList.add("d-none");
+    document.querySelector(".mb-3").classList.remove("d-none");
+  };
+
+ window.incrementCount = async function (clubId) {
+  try {
+    const res = await fetch("/api/favorieten/seen", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ clubId: Number(clubId) })
+    });
+
+    if (!res.ok) throw new Error("Fout bij updaten seen");
+
+    seenCounts[clubId] = (seenCounts[clubId] || 0) + 1;
+
+    const countElement = document.getElementById(`count-${clubId}`);
+    if (countElement) countElement.innerText = seenCounts[clubId];
+
+    const detailCountElement = document.getElementById("detail-seen-count");
+    if (detailCountElement) detailCountElement.innerText = seenCounts[clubId];
+  } catch (err) {
+    console.error("Fout bij verhogen van seen count:", err);
+  }
+};
+
+  const editProfileBtn = document.getElementById("editProfileBtn");
+  const saveProfileBtn = document.getElementById("saveProfileBtn");
+  const cancelProfileBtn = document.getElementById("cancelProfileBtn");
+  const usernameInput = document.getElementById("profileUsername");
+  const emailInput = document.getElementById("profileEmail");
+  const closeProfileBtn = document.getElementById("profileModal");
+
+  const originalUsername = usernameInput.value;
+  const originalEmail = emailInput.value;
+
+  if (editProfileBtn) {
+    editProfileBtn.addEventListener("click", () => {
+      usernameInput.readOnly = false;
+      emailInput.readOnly = false;
+      usernameInput.style.backgroundColor = "#fff";
+      emailInput.style.backgroundColor = "#fff";
+      editProfileBtn.style.display = "none";
+      cancelProfileBtn.style.display = "inline-block";
+      saveProfileBtn.style.display = "inline-block";
+    });
+  }
+
+  if (saveProfileBtn) {
+    saveProfileBtn.addEventListener("click", () => {
+      usernameInput.readOnly = true;
+      emailInput.readOnly = true;
+      usernameInput.style.backgroundColor = "#e9e9e9";
+      emailInput.style.backgroundColor = "#e9e9e9";
+      saveProfileBtn.style.display = "none";
+      cancelProfileBtn.style.display = "none";
+      editProfileBtn.style.display = "inline-block";
+    });
+
+    if (cancelProfileBtn) {
+      cancelProfileBtn.addEventListener("click", () => {
         usernameInput.value = originalUsername;
         emailInput.value = originalEmail;
         usernameInput.readOnly = true;
@@ -204,35 +154,65 @@ document.addEventListener("DOMContentLoaded", function () {
         saveProfileBtn.style.display = "none";
         cancelProfileBtn.style.display = "none";
         editProfileBtn.style.display = "inline-block";
-      })};
-    
-});
-
-
-function addNewClub() {
-    const clubNameInput = document.getElementById("clubNameInput");
-    const clubName = clubNameInput.value.trim();
-
-    if (clubName === "") {
-        alert("Voer een clubnaam in!");
-        return;
+      });
     }
 
-    const clubList = document.querySelector(".list-group");
-    const newClub = document.createElement("div");
-    newClub.classList.add("list-group-item");
+    closeProfileBtn.addEventListener("hidden.bs.modal", function () {
+      usernameInput.value = originalUsername;
+      emailInput.value = originalEmail;
+      usernameInput.readOnly = true;
+      emailInput.readOnly = true;
+      usernameInput.style.backgroundColor = "#e9e9e9";
+      emailInput.style.backgroundColor = "#e9e9e9";
+      saveProfileBtn.style.display = "none";
+      cancelProfileBtn.style.display = "none";
+      editProfileBtn.style.display = "inline-block";
+    });
+  }
+});
 
-    newClub.innerHTML = `
-        <img src="assets/placeholder_logo.png" alt="${clubName}" class="me-3" ">
-        <span class="club-name">${clubName}</span>
-        <div class="form-group d-inline">
-            <div>Aantal keer LIVE gezien: <span id="count-${clubName.toLowerCase()}">0</span></div>
-            <button onclick="incrementCount('${clubName.toLowerCase()}')">Gezien</button>
-        </div>
-        <button class="btn btn-dark float-end">OPEN</button>
-    `;
+const searchInput = document.getElementById("clubNameInput");
+const searchResults = document.getElementById("searchResults");
 
-    clubList.appendChild(newClub);
-    clubNameInput.value = "";
+searchInput.addEventListener("input", async () => {
+  const query = searchInput.value.trim();
+
+  if (query.length < 2) {
+    searchResults.innerHTML = "";
+    return;
+  }
+
+  try {
+    const res = await fetch(`/api/clubs/search?name=${encodeURIComponent(query)}`);
+    const clubs = await res.json();
+
+    searchResults.innerHTML = "";
+
+    clubs.forEach(club => {
+      seenCounts[club.id] = club.seen || 0;
+      const li = document.createElement("li");
+      li.className = "list-group-item d-flex justify-content-between align-items-center";
+      li.textContent = club.name;
+
+      const addBtn = document.createElement("button");
+      addBtn.textContent = "Voeg toe";
+      addBtn.className = "btn btn-sm btn-success";
+      addBtn.onclick = async () => {
+        await fetch("/api/favorieten", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ clubId: club.id })
+        });
+        alert(`'${club.name}' is toegevoegd aan je favorieten`);
+        searchResults.innerHTML = "";
+        searchInput.value = "";
+      };
+
+      li.appendChild(addBtn);
+      searchResults.appendChild(li);
+    });
+  } catch (err) {
+  console.error("Fout bij zoeken:", err);
+  searchResults.innerHTML = `<li class='list-group-item'>Fout bij zoeken: ${err.message || err.toString()}</li>`;
 }
-
+});

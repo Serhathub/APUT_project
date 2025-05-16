@@ -1,11 +1,12 @@
 import express from "express";
 import ejs from "ejs";
 import path from "path";
-import { MongoClient, ObjectId } from "mongodb";
+import { MongoClient,Db,Collection, ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import { error } from "console";
 import session from 'express-session';
 import 'express-session';
+import { User, Club, FavoriteClub } from "./types";
 
 declare module 'express-session' {
   interface SessionData {
@@ -18,12 +19,38 @@ const PORT = 3000;
 const uri = "mongodb+srv://serhatkaya:j5j7JmHajuG4su9l@aputprojectdb.08sfsel.mongodb.net/?retryWrites=true&w=majority&appName=APUTprojectDB";
 const client = new MongoClient(uri);
 const api_token="3f6a9e47-cf22-e54f-dc92-8c03a2e09938";
-let database:any;
+let database:Db;
 
 app.set("view engine", "ejs");
 app.set("port", 3000);
 
 app.use(express.static(path.join(__dirname, "public")));
+
+async function importClubsFromAPI() {
+  const res = await fetch("https://api.futdatabase.com/api/clubs", {
+    headers: { "X-AUTH-TOKEN": api_token }
+  });
+  const data = await res.json();
+
+  const clubs: Club[] = data.items;
+
+  await database.collection<Club>("teams").deleteMany({});
+  await database.collection<Club>("teams").insertMany(clubs);
+}
+async function importLeaguesFromAPI() {
+  const res = await fetch("https://api.futdatabase.com/api/leagues", {
+    headers: { "X-AUTH-TOKEN": api_token }
+  });
+
+  const data = await res.json();
+  const leagues = data.items;
+
+  const leaguesCol = database.collection("leagues");
+  await leaguesCol.deleteMany({});
+  await leaguesCol.insertMany(leagues);
+
+  console.log("Leagues succesvol geïmporteerd");
+}
 
 async function main() {
     try {
@@ -36,7 +63,10 @@ async function main() {
 }
 
 main();
-
+main().then(() => {
+  importClubsFromAPI();
+  importLeaguesFromAPI();
+});
 app.use(express.json());
 
 app.use(express.urlencoded({ extended: true}));
@@ -105,6 +135,77 @@ app.get('/favorieteleagues', (req, res) => {
 
 app.get('/blacklistedPage', (req, res) => {
   res.render('blacklistedPage', { pageTitle: 'Blacklisted' });
+});
+app.get("/api/favorites", requireLogin, async (req, res) => {
+  try {
+    const usersCol = database.collection("users");
+    const clubsCol = database.collection("teams");
+    const leaguesCol = database.collection("leagues");
+
+    const _id = new ObjectId(req.session.userId);
+    const user = await usersCol.findOne({ _id });
+
+    if (!user || !user.favorites || user.favorites.length === 0) {
+      res.json([]);
+      return;
+    }
+
+    const clubIds = user.favorites.map((fav: any) => fav.clubId);
+    const clubs = await clubsCol.find({ id: { $in: clubIds } }).toArray();
+
+    const leagues = await leaguesCol.find().toArray();
+
+    const merged = clubs.map(club => {
+      const match = user.favorites.find((fav: any) => fav.clubId === club.id);
+      const leagueMatch = leagues.find(league => Number(league.id) === Number(club.league));
+
+      return {
+        ...club,
+        seen: match?.seen || 0,
+        leagueName: leagueMatch?.name || null 
+      };
+    });
+
+    res.json(merged);
+  } catch (err) {
+    console.error("Fout bij ophalen van favoriete clubs:", err);
+    res.status(500).json({ error: "Interne serverfout" });
+  }
+});
+
+
+app.get("/api/clubs/search", async (req, res) => {
+  const name = req.query.name?.toString().toLowerCase();
+
+  if (!name) {
+    res.status(400).json({ error: "Naam is verplicht." });
+    return;
+  }
+
+  try {
+    const clubsCol = database.collection("teams");
+    const results = await clubsCol.find({
+      name: { $regex: new RegExp(name, "i") }
+    }).toArray();
+
+    res.json(results);
+  } catch (err) {
+    console.error("Club search DB error:", err);
+    res.status(500).json({ error: "Fout bij zoeken van clubs." });
+  }
+});
+app.get("/api/leagues/:id", async (req, res) => {
+  const leagueId = Number(req.params.id);
+  try {
+    const leaguesCol = database.collection("leagues");
+    const league = await leaguesCol.findOne({ id: leagueId });
+    if (!league)  {res.status(404).json({ error: "League niet gevonden" }); return;}
+
+    res.json({ name: league.name });
+  } catch (err) {
+    console.error("Fout bij ophalen league:", err);
+    res.status(500).json({ error: "Interne serverfout" });
+  }
 });
 
 // test data
@@ -235,7 +336,7 @@ app.post('/login', async (req, res) => {
     });
   }
 
-  req.session.userId = user._id;
+  req.session.userId = user._id.toString();
   return res.redirect('/');
 });
 
@@ -246,7 +347,60 @@ app.post('/logout', (req, res) => {
     res.redirect('/login');
   });
 });
+app.post("/api/favorites", requireLogin, async (req, res) => {
+  const { clubId } = req.body;
 
+  if (typeof clubId !== "number") {
+    res.status(400).json({ error: "Ongeldige clubId" });
+    return;
+  }
+
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId);
+  const user = await usersCol.findOne({ _id });
+
+  if (!user) {
+    res.status(404).json({ error: "Gebruiker niet gevonden" });
+    return;
+  }
+
+  const alreadyExists = user.favorites?.some((f: any) => f.clubId === clubId);
+
+  if (alreadyExists) {
+    res.status(409).json({ error: "Deze club staat al in je favorieten." });
+    return;
+  }
+
+  await usersCol.updateOne(
+    { _id },
+    { $push: { favorites: { clubId, seen: 0 } } }
+  );
+
+  res.status(200).json({ message: "Club toegevoegd aan favorieten." });
+});
+app.post("/api/favorites/seen", requireLogin, async (req, res) => {
+  const { clubId } = req.body;
+
+  if (typeof clubId !== "number") {
+     res.status(400).json({ error: "Ongeldig clubId" });
+     return;
+  }
+
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId);
+
+  const updateResult = await usersCol.updateOne(
+    { _id, "favorites.clubId": clubId },
+    { $inc: { "favorites.$.seen": 1 } }
+  );
+
+  if (updateResult.modifiedCount === 0) {
+     res.status(404).json({ error: "Club niet gevonden in favorieten" });
+     return;
+  }
+
+  res.status(200).json({ message: "Seen count verhoogd" });
+});
 app.post("/profile", requireLogin, async (req, res) => {
   const { username, email } = req.body;
   const usersCol = database.collection("users");

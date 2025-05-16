@@ -8,7 +8,6 @@
       rel="stylesheet"
     />
     <link rel="stylesheet" href="css/favorieten.css" />
-    <script src="js/favorieten.js"></script>
     <title>Favorieten</title>
   </head>
   <body>
@@ -66,81 +65,10 @@
           class="form-control"
           placeholder="Voeg nieuwe club toe..."
         />
-        <button
-          class="btn btn-primary mt-2"
-          style="background-color: #07f468"
-          onclick="addNewClub()"
-        >
-          Toevoegen
-        </button>
+        <ul id="searchResults" class="list-group mt-2"></ul>
       </div>
 
-      <div id="clubList" class="list-group">
-        <div class="list-group-item">
-          <img
-            src="assets/FC_BARCELONA_LOGO.png"
-            alt="FC Barcelona"
-            class="me-3"
-          />
-          <span class="club-name">FC Barcelona</span>
-          <div class="form-group d-inline">
-            <div>
-              Aantal keer LIVE gezien: <span id="count-barcelona">0</span>
-            </div>
-            <button onclick="incrementCount('barcelona')">Gezien</button>
-          </div>
-          <button
-            class="btn btn-dark float-end open-club"
-            data-club="barcelona"
-          >
-            OPEN
-          </button>
-        </div>
-        <div class="list-group-item">
-          <img src="assets/PSG_LOGO.png" alt="PSG" class="me-3" />
-          <span class="club-name">PSG</span>
-          <div class="form-group d-inline">
-            <div>Aantal keer LIVE gezien: <span id="count-psg">0</span></div>
-            <button onclick="incrementCount('psg')">Gezien</button>
-          </div>
-          <button class="btn btn-dark float-end open-club" data-club="psg">
-            OPEN
-          </button>
-        </div>
-        <div class="list-group-item">
-          <img
-            src="assets/REALMADRID_LOGO.png"
-            alt="Real Madrid"
-            class="me-3"
-          />
-          <span class="club-name">Real Madrid</span>
-          <div class="form-group d-inline">
-            <div>
-              Aantal keer LIVE gezien: <span id="count-realmadrid">0</span>
-            </div>
-            <button onclick="incrementCount('realmadrid')">Gezien</button>
-          </div>
-          <button
-            class="btn btn-dark float-end open-club"
-            data-club="realmadrid"
-          >
-            OPEN
-          </button>
-        </div>
-        <div class="list-group-item">
-          <img src="assets/ARSENAL_LOGO.png" alt="Arsenal" class="me-3" />
-          <span class="club-name">Arsenal</span>
-          <div class="form-group d-inline">
-            <div>
-              Aantal keer LIVE gezien: <span id="count-arsenal">0</span>
-            </div>
-            <button onclick="incrementCount('arsenal')">Gezien</button>
-          </div>
-          <button class="btn btn-dark float-end open-club" data-club="arsenal">
-            OPEN
-          </button>
-        </div>
-      </div>
+      <div id="clubList" class="list-group"></div>
 
       <div id="clubDetail" class="container mt-5 d-none">
         <button class="btn btn-secondary mb-3" onclick="goBack()">
@@ -236,5 +164,6 @@
       </div>
     </div>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="js/favorieten.js"></script>
   </body>
 </html>
