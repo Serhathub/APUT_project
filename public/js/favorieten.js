@@ -66,17 +66,47 @@ document.addEventListener("DOMContentLoaded", async function () {
         <div class="club-details">
           <table class="table table-bordered table-dark">
             <tbody>
-              <tr><td><strong>Short Name:</strong></td><td>${club.shortName || '-'}</td></tr>
-              <tr><td><strong>Coach Name:</strong></td><td>${club.coach.name || '-'}</td></tr>
-              <tr><td><strong>League:</strong></td><td>${club.league || '-'}</td></tr>
-              <tr><td><strong>Club Colors:</strong></td><td>${club.clubColors || '-'}</td></tr>
-              <tr><td><strong>Founded:</strong></td><td>${club.founded || '-'}</td></tr>
-              <tr><td><strong>Venue:</strong></td><td>${club.venue || '-'}</td></tr>
+              <tr><td><strong>Korte naam:</strong></td><td>${club.shortName || '-'}</td></tr>
+              <tr><td><strong>Manager naam:</strong></td><td>${club.coach.name || '-'}</td></tr>
+              <tr><td><strong>Liga:</strong></td><td>${club.league || '-'}</td></tr>
+              <tr><td><strong>Club kleuren:</strong></td><td>${club.clubColors || '-'}</td></tr>
+              <tr><td><strong>Gevonden:</strong></td><td>${club.founded || '-'}</td></tr>
+              <tr><td><strong>Stadium:</strong></td><td>${club.venue || '-'}</td></tr>
             </tbody>
           </table>
         </div>
       </div>
     `;
+const squad = club.squad || [];
+const keepers = squad.filter(p => p.position === "Goalkeeper").slice(0, 1);
+const defenders = squad.filter(p => p.position === "Defence").slice(0, 4);
+const midfielders = squad.filter(p => p.position === "Midfield").slice(0, 4);
+const attackers = squad.filter(p => p.position === "Offence").slice(0, 2);
+
+const lineup = [...keepers, ...defenders, ...midfielders, ...attackers];
+
+clubContent.innerHTML += `
+  <div class="mt-4">
+    <h4>Eerste Elftal</h4>
+    <table class="table table-striped table-dark">
+      <thead>
+        <tr>
+          <th>Positie</th>
+          <th>Naam</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${lineup.map(player => `
+          <tr>
+            <td>${player.position || '-'}</td>
+            <td>${player.name || '-'}</td>
+          </tr>
+        `).join('')}
+      </tbody>
+    </table>
+  </div>
+`;
+
 
     document.querySelector(".mb-3").classList.add("d-none");
     clubList.classList.add("d-none");
@@ -199,12 +229,35 @@ searchInput.addEventListener("input", async () => {
       addBtn.textContent = "Voeg toe";
       addBtn.className = "btn btn-sm btn-success";
       addBtn.onclick = async () => {
-        await fetch("/api/favorites", {
+        const response = await fetch("/api/favorites", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ clubId: club.id })
         });
-        alert(`'${club.name}' is toegevoegd aan je favorieten`);
+
+        if (!response.ok) {
+          const error = await response.json();
+          alert(error.error || "Kon club niet toevoegen.");
+          return;
+        }
+
+        seenCounts[club.id] = 0;
+
+        const item = document.createElement("div");
+        item.className = "list-group-item";
+
+        item.innerHTML = `
+    <img src="${club.crest}" alt="${club.name}" class="me-3" />
+    <span class="club-name">${club.name}</span>
+    <div class="form-group d-inline">
+      <div>Aantal keer LIVE gezien: <span id="count-${club.id}">${seenCounts[club.id]}</span></div>
+      <button onclick="incrementCount('${club.id}')">Gezien</button>
+      <button class="btn btn-danger ms-2" onclick="removeFavorite(${club.id})">Verwijder</button>
+    </div>
+    <button class="btn btn-dark float-end open-club" data-club='${JSON.stringify(club)}'>OPEN</button>
+  `;
+
+        document.getElementById("clubList").appendChild(item);
         searchResults.innerHTML = "";
         searchInput.value = "";
       };

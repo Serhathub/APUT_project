@@ -105,6 +105,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7,
     secure: false,
     sameSite: 'lax',
   }
@@ -237,49 +238,6 @@ app.get("/api/leagues/:id", async (req, res) => {
   }
 });
 
-// test data
-app.get('/get-data', async (req, res) => {
-  try {
-    const collection = database.collection('teams');
-    const data = await collection.find().toArray();
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).send('Fout bij ophalen van gegevens');
-  }
-});
-
-// test data met api
-app.get('/clubs', async (req, res) => {
-  try {
-    const response = await fetch('https://api.futdatabase.com/api/clubs', {
-      method: 'GET',
-      headers: {
-        'X-AUTH-TOKEN': api_token
-      }
-    });
-
-    const textBody = await response.text();
-    console.log('Response status:', response.status);
-    console.log('Response body:', textBody);
-
-    let data;
-    try {
-      data = JSON.parse(textBody);
-    } catch (parseErr) {
-      console.error('Kon JSON niet parsen:', parseErr);
-      throw new Error('Invalid JSON response');
-    }
-
-    res.json(data);
-  } catch (err) {
-    console.error('Fetch error:', err);
-    res.status(500).json({ error: 'Er is een fout opgetreden bij het ophalen van de clubs.' });
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
 
 const SALT_ROUNDS = 10;
 
@@ -394,7 +352,7 @@ if (isNaN(parsedClubId)) {
     return;
   }
 
-  const alreadyExists = user.favorites?.some((f: any) => f.clubId === parsedClubId);
+  const alreadyExists = user.favorites?.some((f: any) => Number(f.clubId) === parsedClubId);
 
   if (alreadyExists) {
     res.status(409).json({ error: "Deze club staat al in je favorieten." });
@@ -403,7 +361,7 @@ if (isNaN(parsedClubId)) {
 
   await usersCol.updateOne(
     { _id },
-    { $push: { favorites: { clubId:parsedClubId, seen: 1 } } }
+    { $push: { favorites: { clubId:parsedClubId, seen: 0 } } }
   );
 
   res.status(200).json({ message: "Club toegevoegd aan favorieten." });
@@ -470,4 +428,9 @@ app.delete("/api/favorites/:clubId", requireLogin, async (req, res) => {
   );
 
   res.status(200).json({ message: "Club verwijderd uit favorieten." });
+});
+
+
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
 });
