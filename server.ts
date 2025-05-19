@@ -162,10 +162,35 @@ app.get('/favorieten', (req, res) => {
 app.get('/favorieteleagues', (req, res) => {
   res.render('favorieteleagues', { pageTitle: 'FavorieteLeague' });
 });
-
-app.get('/blacklistedPage', (req, res) => {
-  res.render('blacklistedPage', { pageTitle: 'Blacklisted' });
+app.get("/blacklistedPage", (req, res) => {
+  res.render("blacklistedPage", { pageTitle: "Blacklisted Clubs" });
 });
+
+app.get("/api/blacklist", requireLogin, async (req, res) => {
+  const usersCol = database.collection<User>("users");
+  const clubsCol = database.collection<Club>("teams");
+  const _id = new ObjectId(req.session.userId);
+  const user = await usersCol.findOne({ _id });
+
+  if (!user || !user.blacklistedClubs || user.blacklistedClubs.length === 0) {
+    res.json([]);
+    return;
+  }
+
+  const clubIds = user.blacklistedClubs.map(b => b.clubId);
+  const clubs = await clubsCol.find({ id: { $in: clubIds } }).toArray();
+
+  const response = clubs.map(club => {
+    const match = user.blacklistedClubs.find(b => Number(b.clubId) === club.id);
+    return {
+      ...club,
+      reason: match?.reason || ""
+    };
+  });
+
+  res.json(response);
+});
+
 app.get("/api/favorites", requireLogin, async (req, res) => {
   try {
     const usersCol = database.collection("users");
@@ -335,13 +360,13 @@ app.post('/logout', (req, res) => {
   });
 });
 app.post("/api/favorites", requireLogin, async (req, res) => {
-const { clubId } = req.body;
-const parsedClubId = Number(clubId);
+  const { clubId } = req.body;
+  const parsedClubId = Number(clubId);
 
-if (isNaN(parsedClubId)) {
-  res.status(400).json({ error: "Ongeldige clubId" });
-  return;
-}
+  if (isNaN(parsedClubId)) {
+    res.status(400).json({ error: "Ongeldige clubId" });
+    return;
+  }
 
   const usersCol = database.collection<User>("users");
   const _id = new ObjectId(req.session.userId);
@@ -361,7 +386,7 @@ if (isNaN(parsedClubId)) {
 
   await usersCol.updateOne(
     { _id },
-    { $push: { favorites: { clubId:parsedClubId, seen: 0 } } }
+    { $push: { favorites: { clubId: parsedClubId, seen: 0 } } }
   );
 
   res.status(200).json({ message: "Club toegevoegd aan favorieten." });
@@ -388,6 +413,32 @@ app.post("/api/favorites/seen", requireLogin, async (req, res) => {
 
   res.status(200).json({ message: "Seen count verhoogd" });
 });
+app.post("/api/blacklist", requireLogin, async (req, res) => {
+  const { clubId, reason } = req.body;
+  const parsedClubId = Number(clubId);
+
+  if (isNaN(parsedClubId) || !reason) {
+    res.status(400).json({ error: "Ongeldige data." });
+    return;
+  }
+
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId);
+  const user = await usersCol.findOne({ _id });
+
+  if (!user) { res.status(404).json({ error: "Gebruiker niet gevonden." }); return; }
+
+  const alreadyBlacklisted = user.blacklistedClubs?.some(b => b.clubId === parsedClubId);
+  if (alreadyBlacklisted) {res.status(409).json({ error: "Club staat al op de blacklist." }); return;}
+
+  await usersCol.updateOne(
+    { _id },
+    { $push: { blacklistedClubs: { clubId: parsedClubId, reason } } }
+  );
+
+  res.status(200).json({ message: "Club toegevoegd aan blacklist." });
+});
+
 app.post("/profile", requireLogin, async (req, res) => {
   const { username, email } = req.body;
   const usersCol = database.collection("users");
@@ -429,7 +480,23 @@ app.delete("/api/favorites/:clubId", requireLogin, async (req, res) => {
 
   res.status(200).json({ message: "Club verwijderd uit favorieten." });
 });
+app.delete("/api/blacklist/:clubId", requireLogin, async (req, res) => {
+  const clubId = Number(req.params.clubId);
+  if (isNaN(clubId)) {
+    res.status(400).json({ error: "Ongeldige clubId" });
+    return;
+  }
 
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId);
+
+  await usersCol.updateOne(
+    { _id },
+    { $pull: { blacklistedClubs: { clubId } } }
+  );
+
+  res.status(200).json({ message: "Club verwijderd uit blacklist." });
+});
 
 app.listen(PORT, () => {
   console.log(`Server running at http://localhost:${PORT}`);

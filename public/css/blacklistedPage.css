@@ -5,12 +5,17 @@ body::before {
     left: -20px;
     right: -20px;
     bottom: -20px;
-    background: url("./assets/fifaAchtergrond.png") no-repeat center center;
+    background: url("/Assets/fifaAchtergrond.png") no-repeat center center;
     background-size: cover;
     filter: blur(5px);
     z-index: -1;
 }
-
+body{
+    overflow-y: auto ;
+    overflow-x: hidden ;
+    position: relative;
+    z-index: 0;
+}
 h1 {
     background-color: #07F468;
     color: black;
@@ -59,13 +64,6 @@ h1 {
 .remove-btn:hover {
     background-color: grey;
     color: black;
-}
-.profile-icon {
-    width: 70px;
-    height: 70px; 
-}
-.profile-icon:hover {
-    opacity: 0.61; 
 }
 .dropdown{
     position: absolute;

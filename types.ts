@@ -4,7 +4,10 @@ export interface FavoriteClub {
   clubId: number;
   seen: number;
 }
-
+export interface BlacklistedClub {
+  clubId: number;
+  reason: string;
+}
 export interface User {
   _id?: ObjectId;
   username: string;
@@ -12,6 +15,7 @@ export interface User {
   password: string;
   createdAt: Date;
   favorites: FavoriteClub[];
+  blacklistedClubs: BlacklistedClub[];
 }
 
 export interface Club {
