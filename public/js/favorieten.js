@@ -23,12 +23,13 @@ document.addEventListener("DOMContentLoaded", async function () {
       item.className = "list-group-item";
 
       item.innerHTML = `
-        <img src="/club-logo/${club.id}" alt="${club.name}" class="me-3" />
+        <img src="${club.crest}" alt="${club.name}" class="me-3" />
         <span class="club-name">${club.name}</span>
         <div class="form-group d-inline">
             
             <div>Aantal keer LIVE gezien: <span id="count-${club.id}">${seenCounts[club.id]}</span></div>
             <button onclick="incrementCount('${club.id}')">Gezien</button>
+            <button class="btn btn-danger ms-2" onclick="removeFavorite(${club.id})">Verwijder</button> 
         </div>
         <button class="btn btn-dark float-end open-club" data-club='${JSON.stringify(club)}'>OPEN</button>
       `;
@@ -59,20 +60,20 @@ document.addEventListener("DOMContentLoaded", async function () {
           </div>
           <div><h2 class="fs-1">${club.name}</h2></div>
           <div class="club-logo">
-            <img src="/club-logo/${club.id}" alt="${club.name}" class="me-3" />
+            <img src="${club.crest}" alt="${club.name}" class="me-3" />
           </div>
         </div>
         <div class="club-details">
           <table class="table table-bordered table-dark">
             <tbody>
-              <tr><td><strong>Rating:</strong></td><td>${club.rating || '-'}</td></tr>
-              <tr><td><strong>Coach:</strong></td><td>${club.coach || '-'}</td></tr>
-              <tr><td><strong>Stadium:</strong></td><td>${club.stadium || '-'}</td></tr>
-              <tr><td><strong>League:</strong></td><td>${club.leagueName || '-'}</td></tr>
-              <tr><td><strong>Land:</strong></td><td>${club.country || '-'}</td></tr>
+              <tr><td><strong>Short Name:</strong></td><td>${club.shortName || '-'}</td></tr>
+              <tr><td><strong>Coach Name:</strong></td><td>${club.coach.name || '-'}</td></tr>
+              <tr><td><strong>League:</strong></td><td>${club.league || '-'}</td></tr>
+              <tr><td><strong>Club Colors:</strong></td><td>${club.clubColors || '-'}</td></tr>
+              <tr><td><strong>Founded:</strong></td><td>${club.founded || '-'}</td></tr>
+              <tr><td><strong>Venue:</strong></td><td>${club.venue || '-'}</td></tr>
             </tbody>
           </table>
-          ${club.stadiumImage ? `<img src="${club.stadiumImage}" class="stadium-image" alt="${club.stadium}">` : ''}
         </div>
       </div>
     `;
@@ -216,3 +217,15 @@ searchInput.addEventListener("input", async () => {
     searchResults.innerHTML = `<li class='list-group-item'>Fout bij zoeken: ${err.message || err.toString()}</li>`;
   }
 });
+window.removeFavorite = async function (clubId) {
+  try {
+    const res = await fetch(`/api/favorites/${clubId}`, {
+      method: "DELETE"
+    });
+    if (!res.ok) throw new Error("Fout bij verwijderen");
+    const item = document.querySelector(`[data-club*='"id":${clubId}']`)?.closest(".list-group-item");
+    if (item) item.remove();
+  } catch (err) {
+    console.error("Fout bij verwijderen:", err);
+  }
+};

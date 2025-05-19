@@ -377,12 +377,13 @@ app.post('/logout', (req, res) => {
   });
 });
 app.post("/api/favorites", requireLogin, async (req, res) => {
-  const { clubId } = req.body;
+const { clubId } = req.body;
+const parsedClubId = Number(clubId);
 
-  if (typeof clubId !== "number") {
-    res.status(400).json({ error: "Ongeldige clubId" });
-    return;
-  }
+if (isNaN(parsedClubId)) {
+  res.status(400).json({ error: "Ongeldige clubId" });
+  return;
+}
 
   const usersCol = database.collection<User>("users");
   const _id = new ObjectId(req.session.userId);
@@ -393,7 +394,7 @@ app.post("/api/favorites", requireLogin, async (req, res) => {
     return;
   }
 
-  const alreadyExists = user.favorites?.some((f: any) => f.clubId === clubId);
+  const alreadyExists = user.favorites?.some((f: any) => f.clubId === parsedClubId);
 
   if (alreadyExists) {
     res.status(409).json({ error: "Deze club staat al in je favorieten." });
@@ -402,7 +403,7 @@ app.post("/api/favorites", requireLogin, async (req, res) => {
 
   await usersCol.updateOne(
     { _id },
-    { $push: { favorites: { clubId, seen: 1 } } }
+    { $push: { favorites: { clubId:parsedClubId, seen: 1 } } }
   );
 
   res.status(200).json({ message: "Club toegevoegd aan favorieten." });
@@ -419,7 +420,7 @@ app.post("/api/favorites/seen", requireLogin, async (req, res) => {
 
   const updateResult = await usersCol.updateOne(
     { _id, "favorites.clubId": clubId },
-    { $inc: { "favorites.$.seen": 0 } }
+    { $inc: { "favorites.$.seen": 1 } }
   );
 
   if (updateResult.modifiedCount === 0) {
@@ -452,4 +453,21 @@ app.post("/profile", requireLogin, async (req, res) => {
 
   await usersCol.updateOne({ _id }, { $set: { username, email } });
   res.redirect("/");
+});
+app.delete("/api/favorites/:clubId", requireLogin, async (req, res) => {
+  const clubId = Number(req.params.clubId);
+  if (isNaN(clubId)) {
+    res.status(400).json({ error: "Ongeldige clubId" });
+    return;
+  }
+
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId);
+
+  await usersCol.updateOne(
+    { _id },
+    { $pull: { favorites: { clubId } } }
+  );
+
+  res.status(200).json({ message: "Club verwijderd uit favorieten." });
 });
