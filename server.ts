@@ -18,7 +18,7 @@ const app = express();
 const PORT = 3000;
 const uri = "mongodb+srv://serhatkaya:j5j7JmHajuG4su9l@aputprojectdb.08sfsel.mongodb.net/?retryWrites=true&w=majority&appName=APUTprojectDB";
 const client = new MongoClient(uri);
-const api_token="3f6a9e47-cf22-e54f-dc92-8c03a2e09938";
+const api_token="760b74ad2ee74c15ade7495760546921";
 let database:Db;
 
 app.set("view engine", "ejs");
@@ -27,23 +27,34 @@ app.set("port", 3000);
 app.use(express.static(path.join(__dirname, "public")));
 
 async function importClubsFromAPI() {
-  const res = await fetch("https://api.futdatabase.com/api/clubs", {
-    headers: { "X-AUTH-TOKEN": api_token }
+  const res = await fetch("https://api.football-data.org/v4/teams", {
+    headers: { "X-Auth-Token": api_token }
   });
-  const data = await res.json();
 
-  const clubs: Club[] = data.items;
+  if (!res.ok) {
+    console.error("Fout bij ophalen clubs:", res.status, await res.text());
+    return;
+  }
+
+  const data = await res.json();
+  const clubs: Club[] = data.teams;
 
   await database.collection<Club>("teams").deleteMany({});
   await database.collection<Club>("teams").insertMany(clubs);
 }
+
 async function importLeaguesFromAPI() {
-  const res = await fetch("https://api.futdatabase.com/api/leagues", {
-    headers: { "X-AUTH-TOKEN": api_token }
+  const res = await fetch("https://api.football-data.org/v4/competitions", {
+    headers: { "X-Auth-Token": api_token }
   });
 
+  if (!res.ok) {
+    console.error("Fout bij ophalen leagues:", res.status, await res.text());
+    return;
+  }
+
   const data = await res.json();
-  const leagues = data.items;
+  const leagues = data.competitions;
 
   const leaguesCol = database.collection("leagues");
   await leaguesCol.deleteMany({});
@@ -51,6 +62,7 @@ async function importLeaguesFromAPI() {
 
   console.log("Leagues succesvol geïmporteerd");
 }
+
 
 async function main() {
     try {
