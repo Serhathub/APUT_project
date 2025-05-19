@@ -1,7 +1,7 @@
 import express from "express";
 import ejs from "ejs";
 import path from "path";
-import { MongoClient,Db,Collection, ObjectId } from "mongodb";
+import { MongoClient, Db, Collection, ObjectId } from "mongodb";
 import bcrypt from "bcrypt";
 import { error } from "console";
 import session from 'express-session';
@@ -18,8 +18,8 @@ const app = express();
 const PORT = 3000;
 const uri = "mongodb+srv://serhatkaya:j5j7JmHajuG4su9l@aputprojectdb.08sfsel.mongodb.net/?retryWrites=true&w=majority&appName=APUTprojectDB";
 const client = new MongoClient(uri);
-const api_token="760b74ad2ee74c15ade7495760546921";
-let database:Db;
+const api_token = "760b74ad2ee74c15ade7495760546921";
+let database: Db;
 
 app.set("view engine", "ejs");
 app.set("port", 3000);
@@ -27,21 +27,35 @@ app.set("port", 3000);
 app.use(express.static(path.join(__dirname, "public")));
 
 async function importClubsFromAPI() {
-  const res = await fetch("https://api.football-data.org/v4/teams", {
-    headers: { "X-Auth-Token": api_token }
-  });
+  const competitionCodes = ["BSA", "ELC", "PL", "EC", "FL1", "BL1", "SA", "DED", "PPL", "CLI", "PD", "WC"];
+  const clubsCol = database.collection<Club>("teams");
 
-  if (!res.ok) {
-    console.error("Fout bij ophalen clubs:", res.status, await res.text());
-    return;
+  await clubsCol.deleteMany({});
+
+  for (const code of competitionCodes) {
+    const res = await fetch(`https://api.football-data.org/v4/competitions/${code}/teams`, {
+      headers: { "X-Auth-Token": api_token }
+    });
+
+    if (!res.ok) {
+      console.error(`Fout bij competitie ${code}:`, res.status, await res.text());
+      continue;
+    }
+
+    const data = await res.json();
+    const teams: Club[] = data.teams;
+
+    const enrichedTeams = teams.map(team => ({
+      ...team,
+      league: code
+    }));
+
+    await clubsCol.insertMany(enrichedTeams);
   }
 
-  const data = await res.json();
-  const clubs: Club[] = data.teams;
-
-  await database.collection<Club>("teams").deleteMany({});
-  await database.collection<Club>("teams").insertMany(clubs);
+  console.log("Meerdere competities succesvol geïmporteerd.");
 }
+
 
 async function importLeaguesFromAPI() {
   const res = await fetch("https://api.football-data.org/v4/competitions", {
@@ -65,23 +79,26 @@ async function importLeaguesFromAPI() {
 
 
 async function main() {
-    try {
-        await client.connect();
-        console.log('MongoDB verbonden');
-        database=client.db('APUTproject-database');
-    } catch (e) {     
-        console.error('Verbinding met MongoDB mislukt', e);
-    }
+  try {
+    await client.connect();
+    console.log('MongoDB verbonden');
+    database = client.db('APUTproject-database');
+  } catch (e) {
+    console.error('Verbinding met MongoDB mislukt', e);
+  }
 }
 
 main();
+/*
 main().then(() => {
   importClubsFromAPI();
   importLeaguesFromAPI();
 });
+*/
+
 app.use(express.json());
 
-app.use(express.urlencoded({ extended: true}));
+app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
   secret: "eenSuperGeheimeCodeVoorNu",
@@ -174,7 +191,7 @@ app.get("/api/favorites", requireLogin, async (req, res) => {
       return {
         ...club,
         seen: match?.seen || 0,
-        leagueName: leagueMatch?.name || null 
+        leagueName: leagueMatch?.name || null
       };
     });
 
@@ -211,7 +228,7 @@ app.get("/api/leagues/:id", async (req, res) => {
   try {
     const leaguesCol = database.collection("leagues");
     const league = await leaguesCol.findOne({ id: leagueId });
-    if (!league)  {res.status(404).json({ error: "League niet gevonden" }); return;}
+    if (!league) { res.status(404).json({ error: "League niet gevonden" }); return; }
 
     res.json({ name: league.name });
   } catch (err) {
@@ -222,14 +239,14 @@ app.get("/api/leagues/:id", async (req, res) => {
 
 // test data
 app.get('/get-data', async (req, res) => {
-    try {
-      const collection = database.collection('teams'); 
-      const data = await collection.find().toArray();
-      res.status(200).json(data);
-    } catch (err) {
-      res.status(500).send('Fout bij ophalen van gegevens');
-    }
-  });
+  try {
+    const collection = database.collection('teams');
+    const data = await collection.find().toArray();
+    res.status(200).json(data);
+  } catch (err) {
+    res.status(500).send('Fout bij ophalen van gegevens');
+  }
+});
 
 // test data met api
 app.get('/clubs', async (req, res) => {
@@ -248,7 +265,7 @@ app.get('/clubs', async (req, res) => {
     let data;
     try {
       data = JSON.parse(textBody);
-    } catch(parseErr) {
+    } catch (parseErr) {
       console.error('Kon JSON niet parsen:', parseErr);
       throw new Error('Invalid JSON response');
     }
@@ -261,8 +278,8 @@ app.get('/clubs', async (req, res) => {
 });
 
 app.listen(PORT, () => {
-    console.log(`Server running at http://localhost:${PORT}`);
-  });
+  console.log(`Server running at http://localhost:${PORT}`);
+});
 
 const SALT_ROUNDS = 10;
 
@@ -270,7 +287,7 @@ app.post('/registratie', async (req, res) => {
   try {
     const { username, email, password } = req.body;
 
-    if(!username || !email || !password) {
+    if (!username || !email || !password) {
       return res.status(400).render('registratie', {
         pageTitle: 'Registratie',
         error: 'Vul alle verplichte velden in.'
@@ -290,7 +307,7 @@ app.post('/registratie', async (req, res) => {
     }
 
     const emailTaken = await userCol.findOne({ email });
-     if (emailTaken) {
+    if (emailTaken) {
       return res.status(409).render('registratie', {
         pageTitle: 'Registratie',
         error: 'Deze email is al in gebruik.',
@@ -320,7 +337,7 @@ app.post('/registratie', async (req, res) => {
 
 app.post('/login', async (req, res) => {
   const { username, password } = req.body;
-  
+
   // Server-side validatie
   if (!username || !password) {
     return res.status(400).render('login', {
@@ -385,17 +402,16 @@ app.post("/api/favorites", requireLogin, async (req, res) => {
 
   await usersCol.updateOne(
     { _id },
-    { $push: { favorites: { clubId, seen: 0 } } }
+    { $push: { favorites: { clubId, seen: 1 } } }
   );
 
   res.status(200).json({ message: "Club toegevoegd aan favorieten." });
 });
 app.post("/api/favorites/seen", requireLogin, async (req, res) => {
-  const { clubId } = req.body;
-
-  if (typeof clubId !== "number") {
-     res.status(400).json({ error: "Ongeldig clubId" });
-     return;
+  const clubId = Number(req.body.clubId);
+  if (isNaN(clubId)) {
+    res.status(400).json({ error: "Ongeldige clubId" });
+    return;
   }
 
   const usersCol = database.collection<User>("users");
@@ -403,12 +419,12 @@ app.post("/api/favorites/seen", requireLogin, async (req, res) => {
 
   const updateResult = await usersCol.updateOne(
     { _id, "favorites.clubId": clubId },
-    { $inc: { "favorites.$.seen": 1 } }
+    { $inc: { "favorites.$.seen": 0 } }
   );
 
   if (updateResult.modifiedCount === 0) {
-     res.status(404).json({ error: "Club niet gevonden in favorieten" });
-     return;
+    res.status(404).json({ error: "Club niet gevonden in favorieten" });
+    return;
   }
 
   res.status(200).json({ message: "Seen count verhoogd" });

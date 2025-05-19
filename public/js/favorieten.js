@@ -1,13 +1,13 @@
-    const seenCounts = {};
+const seenCounts = {};
 
 document.addEventListener("DOMContentLoaded", async function () {
-    
-    const clubList = document.getElementById("clubList");
-    const clubDetail = document.getElementById("clubDetail");
-    const clubContent = document.getElementById("clubContent");
+
+  const clubList = document.getElementById("clubList");
+  const clubDetail = document.getElementById("clubDetail");
+  const clubContent = document.getElementById("clubContent");
 
   try {
-    const res = await fetch("/api/favorieten");
+    const res = await fetch("/api/favorites");
     const clubs = await res.json();
 
     if (!clubs.length) {
@@ -88,27 +88,27 @@ document.addEventListener("DOMContentLoaded", async function () {
     document.querySelector(".mb-3").classList.remove("d-none");
   };
 
- window.incrementCount = async function (clubId) {
-  try {
-    const res = await fetch("/api/favorieten/seen", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ clubId: Number(clubId) })
-    });
+  window.incrementCount = async function (clubId) {
+    try {
+      const res = await fetch("/api/favorites/seen", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clubId: Number(clubId) })
+      });
 
-    if (!res.ok) throw new Error("Fout bij updaten seen");
+      if (!res.ok) throw new Error("Fout bij updaten seen");
 
-    seenCounts[clubId] = (seenCounts[clubId] || 0) + 1;
+      seenCounts[clubId] = (seenCounts[clubId] || 0) + 1;
 
-    const countElement = document.getElementById(`count-${clubId}`);
-    if (countElement) countElement.innerText = seenCounts[clubId];
+      const countElement = document.getElementById(`count-${clubId}`);
+      if (countElement) countElement.innerText = seenCounts[clubId];
 
-    const detailCountElement = document.getElementById("detail-seen-count");
-    if (detailCountElement) detailCountElement.innerText = seenCounts[clubId];
-  } catch (err) {
-    console.error("Fout bij verhogen van seen count:", err);
-  }
-};
+      const detailCountElement = document.getElementById("detail-seen-count");
+      if (detailCountElement) detailCountElement.innerText = seenCounts[clubId];
+    } catch (err) {
+      console.error("Fout bij verhogen van seen count:", err);
+    }
+  };
 
   const editProfileBtn = document.getElementById("editProfileBtn");
   const saveProfileBtn = document.getElementById("saveProfileBtn");
@@ -198,7 +198,7 @@ searchInput.addEventListener("input", async () => {
       addBtn.textContent = "Voeg toe";
       addBtn.className = "btn btn-sm btn-success";
       addBtn.onclick = async () => {
-        await fetch("/api/favorieten", {
+        await fetch("/api/favorites", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify({ clubId: club.id })
@@ -212,7 +212,7 @@ searchInput.addEventListener("input", async () => {
       searchResults.appendChild(li);
     });
   } catch (err) {
-  console.error("Fout bij zoeken:", err);
-  searchResults.innerHTML = `<li class='list-group-item'>Fout bij zoeken: ${err.message || err.toString()}</li>`;
-}
+    console.error("Fout bij zoeken:", err);
+    searchResults.innerHTML = `<li class='list-group-item'>Fout bij zoeken: ${err.message || err.toString()}</li>`;
+  }
 });

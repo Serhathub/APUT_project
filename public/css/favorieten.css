@@ -13,6 +13,44 @@ body::before {
 body{
     overflow: hidden;
 }
+#searchResults {
+    max-height: 200px;
+    overflow-y: auto;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    padding: 0;
+    position: relative;
+    z-index: 10;
+  }
+
+  #searchResults li {
+    font-size: 0.9rem;
+    padding: 8px 12px;
+    cursor: pointer;
+  }
+
+  #searchResults li:hover {
+    background-color: #f0f0f0;
+  }
+.navbar-custom {
+  background-color: #07F468;
+}
+
+.navbar-brand-custom {
+  color: #000;
+  font-weight: bold;
+  font-size: 2rem;
+  cursor: default;
+}
+.dropdown-item {
+  font-size: 1.2rem;
+}
+.user-icon-btn {
+  font-size: 2rem;
+  border: none;
+  background: none;
+  color: #000;
+}
 h1{
     background-color: #07F468; 
     color: black; 
