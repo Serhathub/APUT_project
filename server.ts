@@ -105,6 +105,7 @@ app.use(session({
   resave: false,
   saveUninitialized: false,
   cookie: {
+    maxAge: 1000 * 60 * 60 * 24 * 7,
     secure: false,
     sameSite: 'lax',
   }
@@ -237,49 +238,6 @@ app.get("/api/leagues/:id", async (req, res) => {
   }
 });
 
-// test data
-app.get('/get-data', async (req, res) => {
-  try {
-    const collection = database.collection('teams');
-    const data = await collection.find().toArray();
-    res.status(200).json(data);
-  } catch (err) {
-    res.status(500).send('Fout bij ophalen van gegevens');
-  }
-});
-
-// test data met api
-app.get('/clubs', async (req, res) => {
-  try {
-    const response = await fetch('https://api.futdatabase.com/api/clubs', {
-      method: 'GET',
-      headers: {
-        'X-AUTH-TOKEN': api_token
-      }
-    });
-
-    const textBody = await response.text();
-    console.log('Response status:', response.status);
-    console.log('Response body:', textBody);
-
-    let data;
-    try {
-      data = JSON.parse(textBody);
-    } catch (parseErr) {
-      console.error('Kon JSON niet parsen:', parseErr);
-      throw new Error('Invalid JSON response');
-    }
-
-    res.json(data);
-  } catch (err) {
-    console.error('Fetch error:', err);
-    res.status(500).json({ error: 'Er is een fout opgetreden bij het ophalen van de clubs.' });
-  }
-});
-
-app.listen(PORT, () => {
-  console.log(`Server running at http://localhost:${PORT}`);
-});
 
 const SALT_ROUNDS = 10;
 
@@ -377,12 +335,13 @@ app.post('/logout', (req, res) => {
   });
 });
 app.post("/api/favorites", requireLogin, async (req, res) => {
-  const { clubId } = req.body;
+const { clubId } = req.body;
+const parsedClubId = Number(clubId);
 
-  if (typeof clubId !== "number") {
-    res.status(400).json({ error: "Ongeldige clubId" });
-    return;
-  }
+if (isNaN(parsedClubId)) {
+  res.status(400).json({ error: "Ongeldige clubId" });
+  return;
+}
 
   const usersCol = database.collection<User>("users");
   const _id = new ObjectId(req.session.userId);
@@ -393,7 +352,7 @@ app.post("/api/favorites", requireLogin, async (req, res) => {
     return;
   }
 
-  const alreadyExists = user.favorites?.some((f: any) => f.clubId === clubId);
+  const alreadyExists = user.favorites?.some((f: any) => Number(f.clubId) === parsedClubId);
 
   if (alreadyExists) {
     res.status(409).json({ error: "Deze club staat al in je favorieten." });
@@ -402,7 +361,7 @@ app.post("/api/favorites", requireLogin, async (req, res) => {
 
   await usersCol.updateOne(
     { _id },
-    { $push: { favorites: { clubId, seen: 1 } } }
+    { $push: { favorites: { clubId:parsedClubId, seen: 0 } } }
   );
 
   res.status(200).json({ message: "Club toegevoegd aan favorieten." });
@@ -419,7 +378,7 @@ app.post("/api/favorites/seen", requireLogin, async (req, res) => {
 
   const updateResult = await usersCol.updateOne(
     { _id, "favorites.clubId": clubId },
-    { $inc: { "favorites.$.seen": 0 } }
+    { $inc: { "favorites.$.seen": 1 } }
   );
 
   if (updateResult.modifiedCount === 0) {
@@ -452,4 +411,26 @@ app.post("/profile", requireLogin, async (req, res) => {
 
   await usersCol.updateOne({ _id }, { $set: { username, email } });
   res.redirect("/");
+});
+app.delete("/api/favorites/:clubId", requireLogin, async (req, res) => {
+  const clubId = Number(req.params.clubId);
+  if (isNaN(clubId)) {
+    res.status(400).json({ error: "Ongeldige clubId" });
+    return;
+  }
+
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId);
+
+  await usersCol.updateOne(
+    { _id },
+    { $pull: { favorites: { clubId } } }
+  );
+
+  res.status(200).json({ message: "Club verwijderd uit favorieten." });
+});
+
+
+app.listen(PORT, () => {
+  console.log(`Server running at http://localhost:${PORT}`);
 });
