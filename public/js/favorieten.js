@@ -11,7 +11,7 @@ document.addEventListener("DOMContentLoaded", async function () {
     const clubs = await res.json();
 
     if (!clubs.length) {
-      clubList.innerHTML = "<p>Je hebt nog geen favoriete clubs.</p>";
+      clubList.innerHTML = `<p class="no-favorite-msg">Je hebt nog geen favoriete clubs.</p>`;
       return;
     }
 
@@ -77,15 +77,15 @@ document.addEventListener("DOMContentLoaded", async function () {
         </div>
       </div>
     `;
-const squad = club.squad || [];
-const keepers = squad.filter(p => p.position === "Goalkeeper").slice(0, 1);
-const defenders = squad.filter(p => p.position === "Defence").slice(0, 4);
-const midfielders = squad.filter(p => p.position === "Midfield").slice(0, 4);
-const attackers = squad.filter(p => p.position === "Offence").slice(0, 2);
+    const squad = club.squad || [];
+    const keepers = squad.filter(p => p.position === "Goalkeeper").slice(0, 1);
+    const defenders = squad.filter(p => p.position === "Defence").slice(0, 4);
+    const midfielders = squad.filter(p => p.position === "Midfield").slice(0, 4);
+    const attackers = squad.filter(p => p.position === "Offence").slice(0, 2);
 
-const lineup = [...keepers, ...defenders, ...midfielders, ...attackers];
+    const lineup = [...keepers, ...defenders, ...midfielders, ...attackers];
 
-clubContent.innerHTML += `
+    clubContent.innerHTML += `
   <div class="mt-4">
     <h4>Eerste Elftal</h4>
     <table class="table table-striped table-dark">
@@ -260,6 +260,8 @@ searchInput.addEventListener("input", async () => {
         document.getElementById("clubList").appendChild(item);
         searchResults.innerHTML = "";
         searchInput.value = "";
+        const noFavMsg = document.querySelector(".no-favorite-msg");
+        if (noFavMsg) noFavMsg.remove();
       };
 
       li.appendChild(addBtn);

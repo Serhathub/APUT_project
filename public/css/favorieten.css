@@ -278,6 +278,16 @@ h2 {
     height: auto;
   }
 }
+.no-favorite-msg {
+  text-align: center;
+  color: #ff4d4d;
+  font-size: 1.3rem;
+  font-weight: bold;
+  padding: 20px;
+  background-color: #fff3f3;
+  border: 1px solid #ffcccc;
+  border-radius: 8px;
+}
 
 @media (max-width: 360px) {
     .mb-3 {
