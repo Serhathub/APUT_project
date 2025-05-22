@@ -1,207 +1,5 @@
+document.addEventListener("DOMContentLoaded", function () {
 const seenCounts = {};
-
-document.addEventListener("DOMContentLoaded", async function () {
-
-  const clubList = document.getElementById("clubList");
-  const clubDetail = document.getElementById("clubDetail");
-  const clubContent = document.getElementById("clubContent");
-
-  try {
-    const res = await fetch("/api/favorites");
-    const clubs = await res.json();
-
-    if (!clubs.length) {
-      clubList.innerHTML = `<p class="no-favorite-msg">Je hebt nog geen favoriete clubs.</p>`;
-      return;
-    }
-
-    clubList.innerHTML = "";
-
-    clubs.forEach(club => {
-      seenCounts[club.id] = club.seen || 0;
-      const item = document.createElement("div");
-      item.className = "list-group-item";
-
-      item.innerHTML = `
-        <img src="${club.crest}" alt="${club.name}" class="me-3" />
-        <span class="club-name">${club.name}</span>
-        <div class="form-group d-inline">
-            
-            <div>Aantal keer LIVE gezien: <span id="count-${club.id}">${seenCounts[club.id]}</span></div>
-            <button onclick="incrementCount('${club.id}')">Gezien</button>
-            <button class="btn btn-danger ms-2" onclick="removeFavorite(${club.id})">Verwijder</button> 
-        </div>
-        <button class="btn btn-dark float-end open-club" data-club='${JSON.stringify(club)}'>OPEN</button>
-      `;
-      clubList.appendChild(item);
-    });
-  } catch (err) {
-    console.error("Fout bij ophalen favoriete clubs:", err);
-    clubList.innerHTML = "<p>Favorieten konden niet geladen worden.</p>";
-  }
-
-  clubList.addEventListener("click", function (e) {
-    const button = e.target.closest(".open-club");
-    if (button) {
-      const clubData = JSON.parse(button.getAttribute("data-club"));
-      showClubDetails(clubData);
-    }
-  });
-
-  function showClubDetails(club) {
-    const seenCount = seenCounts[club.id] || 0;
-    clubContent.innerHTML = `
-      <div class="club-detail-box">
-        <div class="club-header">
-          <div>
-            <p><strong>Aantal keer LIVE gezien:</strong></p>
-            <h3 id="detail-seen-count">${seenCount}</h3> 
-            <button class="btn btn-dark" onclick="incrementCount('${club.id}')">Gezien</button>
-          </div>
-          <div><h2 class="fs-1">${club.name}</h2></div>
-          <div class="club-logo">
-            <img src="${club.crest}" alt="${club.name}" class="me-3" />
-          </div>
-        </div>
-        <div class="club-details">
-          <table class="table table-bordered table-dark">
-            <tbody>
-              <tr><td><strong>Korte naam:</strong></td><td>${club.shortName || '-'}</td></tr>
-              <tr><td><strong>Manager naam:</strong></td><td>${club.coach.name || '-'}</td></tr>
-              <tr><td><strong>Liga:</strong></td><td>${club.league || '-'}</td></tr>
-              <tr><td><strong>Club kleuren:</strong></td><td>${club.clubColors || '-'}</td></tr>
-              <tr><td><strong>Gevonden:</strong></td><td>${club.founded || '-'}</td></tr>
-              <tr><td><strong>Stadium:</strong></td><td>${club.venue || '-'}</td></tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-    `;
-    const squad = club.squad || [];
-    const keepers = squad.filter(p => p.position === "Goalkeeper").slice(0, 1);
-    const defenders = squad.filter(p => p.position === "Defence").slice(0, 4);
-    const midfielders = squad.filter(p => p.position === "Midfield").slice(0, 4);
-    const attackers = squad.filter(p => p.position === "Offence").slice(0, 2);
-
-    const lineup = [...keepers, ...defenders, ...midfielders, ...attackers];
-
-    clubContent.innerHTML += `
-  <div class="mt-4">
-    <h4>Eerste Elftal</h4>
-    <table class="table table-striped table-dark">
-      <thead>
-        <tr>
-          <th>Positie</th>
-          <th>Naam</th>
-        </tr>
-      </thead>
-      <tbody>
-        ${lineup.map(player => `
-          <tr>
-            <td>${player.position || '-'}</td>
-            <td>${player.name || '-'}</td>
-          </tr>
-        `).join('')}
-      </tbody>
-    </table>
-  </div>
-`;
-
-
-    document.querySelector(".mb-3").classList.add("d-none");
-    clubList.classList.add("d-none");
-    clubDetail.classList.remove("d-none");
-  }
-
-  window.goBack = function () {
-    clubList.classList.remove("d-none");
-    clubDetail.classList.add("d-none");
-    document.querySelector(".mb-3").classList.remove("d-none");
-  };
-
-  window.incrementCount = async function (clubId) {
-    try {
-      const res = await fetch("/api/favorites/seen", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ clubId: Number(clubId) })
-      });
-
-      if (!res.ok) throw new Error("Fout bij updaten seen");
-
-      seenCounts[clubId] = (seenCounts[clubId] || 0) + 1;
-
-      const countElement = document.getElementById(`count-${clubId}`);
-      if (countElement) countElement.innerText = seenCounts[clubId];
-
-      const detailCountElement = document.getElementById("detail-seen-count");
-      if (detailCountElement) detailCountElement.innerText = seenCounts[clubId];
-    } catch (err) {
-      console.error("Fout bij verhogen van seen count:", err);
-    }
-  };
-
-  const editProfileBtn = document.getElementById("editProfileBtn");
-  const saveProfileBtn = document.getElementById("saveProfileBtn");
-  const cancelProfileBtn = document.getElementById("cancelProfileBtn");
-  const usernameInput = document.getElementById("profileUsername");
-  const emailInput = document.getElementById("profileEmail");
-  const closeProfileBtn = document.getElementById("profileModal");
-
-  const originalUsername = usernameInput.value;
-  const originalEmail = emailInput.value;
-
-  if (editProfileBtn) {
-    editProfileBtn.addEventListener("click", () => {
-      usernameInput.readOnly = false;
-      emailInput.readOnly = false;
-      usernameInput.style.backgroundColor = "#fff";
-      emailInput.style.backgroundColor = "#fff";
-      editProfileBtn.style.display = "none";
-      cancelProfileBtn.style.display = "inline-block";
-      saveProfileBtn.style.display = "inline-block";
-    });
-  }
-
-  if (saveProfileBtn) {
-    saveProfileBtn.addEventListener("click", () => {
-      usernameInput.readOnly = true;
-      emailInput.readOnly = true;
-      usernameInput.style.backgroundColor = "#e9e9e9";
-      emailInput.style.backgroundColor = "#e9e9e9";
-      saveProfileBtn.style.display = "none";
-      cancelProfileBtn.style.display = "none";
-      editProfileBtn.style.display = "inline-block";
-    });
-
-    if (cancelProfileBtn) {
-      cancelProfileBtn.addEventListener("click", () => {
-        usernameInput.value = originalUsername;
-        emailInput.value = originalEmail;
-        usernameInput.readOnly = true;
-        emailInput.readOnly = true;
-        usernameInput.style.backgroundColor = "#e9e9e9";
-        emailInput.style.backgroundColor = "#e9e9e9";
-        saveProfileBtn.style.display = "none";
-        cancelProfileBtn.style.display = "none";
-        editProfileBtn.style.display = "inline-block";
-      });
-    }
-
-    closeProfileBtn.addEventListener("hidden.bs.modal", function () {
-      usernameInput.value = originalUsername;
-      emailInput.value = originalEmail;
-      usernameInput.readOnly = true;
-      emailInput.readOnly = true;
-      usernameInput.style.backgroundColor = "#e9e9e9";
-      emailInput.style.backgroundColor = "#e9e9e9";
-      saveProfileBtn.style.display = "none";
-      cancelProfileBtn.style.display = "none";
-      editProfileBtn.style.display = "inline-block";
-    });
-  }
-});
-
 const searchInput = document.getElementById("clubNameInput");
 const searchResults = document.getElementById("searchResults");
 
@@ -249,12 +47,12 @@ searchInput.addEventListener("input", async () => {
         item.innerHTML = `
     <img src="${club.crest}" alt="${club.name}" class="me-3" />
     <span class="club-name">${club.name}</span>
-    <div class="form-group d-inline">
+    <div class="form-group d-inline ms-3">
       <div>Aantal keer LIVE gezien: <span id="count-${club.id}">${seenCounts[club.id]}</span></div>
-      <button onclick="incrementCount('${club.id}')">Gezien</button>
-      <button class="btn btn-danger ms-2" onclick="removeFavorite(${club.id})">Verwijder</button>
+      <button class="btn btn-secondary" onclick="incrementCount('${club.id}')">Gezien</button>
+      <button class="btn btn-danger" onclick="removeFavorite(${club.id})">Verwijder</button>
     </div>
-    <button class="btn btn-dark float-end open-club" data-club='${JSON.stringify(club)}'>OPEN</button>
+    <a href="/favorieten/club/${club.id}" class="btn btn-dark float-end open-club">OPEN</a>
   `;
 
         document.getElementById("clubList").appendChild(item);
@@ -272,15 +70,6 @@ searchInput.addEventListener("input", async () => {
     searchResults.innerHTML = `<li class='list-group-item'>Fout bij zoeken: ${err.message || err.toString()}</li>`;
   }
 });
-window.removeFavorite = async function (clubId) {
-  try {
-    const res = await fetch(`/api/favorites/${clubId}`, {
-      method: "DELETE"
-    });
-    if (!res.ok) throw new Error("Fout bij verwijderen");
-    const item = document.querySelector(`[data-club*='"id":${clubId}']`)?.closest(".list-group-item");
-    if (item) item.remove();
-  } catch (err) {
-    console.error("Fout bij verwijderen:", err);
-  }
-};
+
+
+});

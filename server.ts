@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import { error } from "console";
 import session from 'express-session';
 import 'express-session';
-import { User, Club, FavoriteClub } from "./types";
+import { User, Club, FavoriteClub, BlacklistedClub, Player, Coach, Area, League } from "./types";
 
 declare module 'express-session' {
   interface SessionData {
@@ -27,7 +27,7 @@ app.set("port", 3000);
 app.use(express.static(path.join(__dirname, "public")));
 
 async function importClubsFromAPI() {
-  const competitionCodes = ["BSA", "ELC", "PL", "EC", "FL1", "BL1", "SA", "DED", "PPL", "CLI", "PD", "WC"];
+  const competitionCodes = ["BSA", "ELC", "PL", "EC", "FL1", "BL1", "SA", "DED", "PPL", "PD", "WC"];
   const clubsCol = database.collection<Club>("teams");
 
   await clubsCol.deleteMany({});
@@ -53,29 +53,37 @@ async function importClubsFromAPI() {
     await clubsCol.insertMany(enrichedTeams);
   }
 
-  console.log("Meerdere competities succesvol geïmporteerd.");
+  console.log("Meerdere clubs succesvol geïmporteerd.");
 }
 
 
 async function importLeaguesFromAPI() {
+  const competitionCodes = ["BSA", "ELC", "PL", "EC", "FL1", "BL1", "SA", "DED", "PPL", "PD", "WC"];
+  const leaguesCol = database.collection("leagues");
+
+  await leaguesCol.deleteMany({});
+
   const res = await fetch("https://api.football-data.org/v4/competitions", {
     headers: { "X-Auth-Token": api_token }
   });
 
   if (!res.ok) {
-    console.error("Fout bij ophalen leagues:", res.status, await res.text());
+    console.error("Fout bij ophalen van leagues:", res.status, await res.text());
     return;
   }
 
   const data = await res.json();
-  const leagues = data.competitions;
+  const allLeagues = data.competitions;
 
-  const leaguesCol = database.collection("leagues");
-  await leaguesCol.deleteMany({});
-  await leaguesCol.insertMany(leagues);
+  const filteredLeagues = allLeagues.filter((league: any) =>
+    competitionCodes.includes(league.code)
+  );
 
-  console.log("Leagues succesvol geïmporteerd");
+  await leaguesCol.insertMany(filteredLeagues);
+
+  console.log("Meerdere leagues succesvol geïmporteerd.");
 }
+
 
 
 async function main() {
@@ -155,9 +163,73 @@ app.get('/Quiz-Page', requireLogin, (req, res) => {
   res.render('Quiz-Page', { pageTitle: 'FIFA Quiz_Page' });
 });
 
-app.get('/favorieten', (req, res) => {
-  res.render('favorieten', { pageTitle: 'Favorieten' });
+app.get('/favorieten', requireLogin, async (req, res) => {
+  const usersCol = database.collection<User>("users");
+  const clubsCol = database.collection<Club>("teams");
+
+  const _id = new ObjectId(req.session.userId);
+  const user = await usersCol.findOne({ _id });
+
+  if (!user || !user.favorites || user.favorites.length === 0) {
+    return res.render('favorieten', { pageTitle: 'Favorieten', clubs: [], search: req.query.search || '' });
+  }
+
+  const clubIds = user.favorites.map(f => f.clubId);
+  const allFavClubsMap = new Map();
+  const fetchedClubs = await clubsCol.find({ id: { $in: clubIds } }).toArray();
+  fetchedClubs.forEach(club => allFavClubsMap.set(club.id, club));
+
+  const enriched = user.favorites.map(fav => {
+    const club = allFavClubsMap.get(fav.clubId);
+    if (!club) return null;
+    return {
+      ...club,
+      seen: fav.seen || 0
+    };
+  }).filter(Boolean);
+
+  let filteredClubs = enriched;
+  const search = req.query.search?.toString().trim().toLowerCase();
+  if (search) {
+    filteredClubs = enriched.filter(club =>
+      club.name.toLowerCase().includes(search)
+    );
+  }
+
+  res.render('favorieten', {
+    pageTitle: 'Favorieten',
+    clubs: filteredClubs,
+    search: req.query.search || ''
+  });
 });
+app.get("/favorieten/club/:id", requireLogin, async (req, res) => {
+  const clubsCol = database.collection<Club>("teams");
+  const leaguesCol = database.collection<League>("leagues");
+  const usersCol = database.collection<User>("users");
+
+  const userId = new ObjectId(req.session.userId);
+  const user = await usersCol.findOne({ _id: userId });
+  const clubId = Number(req.params.id);
+
+  const club = await clubsCol.findOne({ id: clubId });
+  if (!club) {
+    res.status(404).send("Club niet gevonden");
+    return;
+  }
+
+  const seen = user?.favorites?.find((f: FavoriteClub) => f.clubId === clubId)?.seen || 0;
+  const league = await leaguesCol.findOne({ code: club.league }); 
+  const squad = club.squad || [];
+  const lineup = [...squad].slice(0, 11);
+
+  res.render("clubDetail", {
+    club,
+    seen,
+    lineup,
+    leagueName: league?.name || "-"
+  });
+});
+
 
 app.get('/favorieteleagues', (req, res) => {
   res.render('favorieteleagues', { pageTitle: 'FavorieteLeague' });
@@ -189,6 +261,11 @@ app.get("/api/blacklist", requireLogin, async (req, res) => {
   });
 
   res.json(response);
+});
+app.get("/api/clubs/all", requireLogin, async (req, res) => {
+  const clubsCol = database.collection<Club>("teams");
+  const allClubs = await clubsCol.find({}, { projection: { id: 1, name: 1, crest: 1 } }).toArray();
+  res.json(allClubs);
 });
 
 app.get("/api/favorites", requireLogin, async (req, res) => {
@@ -429,7 +506,7 @@ app.post("/api/blacklist", requireLogin, async (req, res) => {
   if (!user) { res.status(404).json({ error: "Gebruiker niet gevonden." }); return; }
 
   const alreadyBlacklisted = user.blacklistedClubs?.some(b => b.clubId === parsedClubId);
-  if (alreadyBlacklisted) {res.status(409).json({ error: "Club staat al op de blacklist." }); return;}
+  if (alreadyBlacklisted) { res.status(409).json({ error: "Club staat al op de blacklist." }); return; }
 
   await usersCol.updateOne(
     { _id },
@@ -463,10 +540,10 @@ app.post("/profile", requireLogin, async (req, res) => {
   await usersCol.updateOne({ _id }, { $set: { username, email } });
   res.redirect("/");
 });
-app.delete("/api/favorites/:clubId", requireLogin, async (req, res) => {
+app.post("/api/favorites/delete/:clubId", requireLogin, async (req, res) => {
   const clubId = Number(req.params.clubId);
   if (isNaN(clubId)) {
-    res.status(400).json({ error: "Ongeldige clubId" });
+    res.status(400).send("Ongeldige clubId");
     return;
   }
 
@@ -478,8 +555,9 @@ app.delete("/api/favorites/:clubId", requireLogin, async (req, res) => {
     { $pull: { favorites: { clubId } } }
   );
 
-  res.status(200).json({ message: "Club verwijderd uit favorieten." });
+  res.redirect("/favorieten");
 });
+
 app.delete("/api/blacklist/:clubId", requireLogin, async (req, res) => {
   const clubId = Number(req.params.clubId);
   if (isNaN(clubId)) {
