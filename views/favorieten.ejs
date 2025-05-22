@@ -12,56 +12,41 @@
 
 <body>
   <h1 class="text-center mb-4">Favoriete Clubs</h1>
-  <div class="dropdown">
-    <div class="dropdown">
-      <button class="btn btn-link user-icon-btn dropdown-toggle" type="button" id="userDropdown"
-        data-bs-toggle="dropdown" aria-expanded="false">
-        <i class="bi bi-person-circle"></i>
-      </button>
-      <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
-        <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profiel</a></li>
-        <li>
-          <hr class="dropdown-divider">
-        </li>
-        <li><a class="dropdown-item" href="Quiz-Page">Game Pagina</a></li>
-
-        <li>
-          <a class="dropdown-item" href="favorieten">Favoriete Clubs</a>
-        </li>
-        <li>
-          <a class="dropdown-item" href="favorieteleagues">Favoriete League</a>
-        </li>
-        <li>
-          <a class="dropdown-item" href="blacklistedPage">Blacklisted Clubs</a>
-        </li>
-        <li>
-          <hr class="dropdown-divider" />
-        </li>
-        <li>
-          <form action="/logout" method="POST" class="d-inline">
-            <button type="submit" class="dropdown-item">Uitloggen</button>
-          </form>
-        </li>
-      </ul>
-    </div>
-    <ul class="dropdown-menu dropdown-menu-end">
-    </ul>
-  </div>
+  <%- include('partials/profileModal') %>
   <div class="container mt-5">
+    
     <div class="mb-3">
-      <input type="text" id="clubNameInput" class="form-control" placeholder="Voeg nieuwe club toe..." />
+      <input type="text" id="clubNameInput" class="form-control" placeholder="Zoek club op naam..." />
       <ul id="searchResults" class="list-group mt-2"></ul>
     </div>
+    <% if (clubs.length===0) { %>
+      <p class="no-favorite-msg">Je hebt nog geen favoriete clubs.</p>
+      <% } %>
 
-    <div id="clubList" class="list-group"></div>
 
-    <div id="clubDetail" class="container mt-5 d-none">
-      <button class="btn btn-secondary mb-3" onclick="goBack()">
-        ← Terug
-      </button>
-      <div id="clubContent" class="club-detail-box"></div>
-    </div>
+        <div class="list-group" id="clubList">
+          <% clubs.forEach(club=> { %>
+            <div class="list-group-item">
+              <img src="<%= club.crest %>" alt="<%= club.name %>" />
+              <span class="club-name">
+                <%= club.name %>
+              </span>
+              <div class="form-group d-inline ms-3">
+                <div>Aantal keer LIVE gezien: <span id="count-<%= club.id %>">
+                    <%= club.seen %>
+                  </span></div>
+                <button class="btn btn-secondary" onclick="incrementCount('<%= club.id %>')">Gezien</button>
+                <form action="/api/favorites/delete/<%= club.id %>" method="POST" class="d-inline">
+                  <button type="submit" class="btn btn-danger">Verwijder</button>
+                </form>
+
+              </div>
+              <a href="/favorieten/club/<%= club.id %>" class="btn btn-dark float-end open-club">OPEN</a>
+            </div>
+            <% }) %>
+        </div>
   </div>
+
   <div class="modal fade" id="profileModal" tabindex="-1" aria-labelledby="profileModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-lg">
       <div class="modal-content">
@@ -92,19 +77,14 @@
           </div>
         </div>
         <div class="modal-footer">
-          <button id="editProfileBtn" type="button" class="btn btn-secondary">
-            Bewerken
-          </button>
-          <button id="cancelProfileBtn" type="button" class="btn btn-danger" style="display: none">
-            Annuleren
-          </button>
-          <button id="saveProfileBtn" type="button" class="btn" style="display: none">
-            Opslaan
-          </button>
+          <button id="editProfileBtn" type="button" class="btn btn-secondary">Bewerken</button>
+          <button id="cancelProfileBtn" type="button" class="btn btn-danger" style="display: none">Annuleren</button>
+          <button id="saveProfileBtn" type="button" class="btn" style="display: none">Opslaan</button>
         </div>
       </div>
     </div>
   </div>
+
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   <script src="js/favorieten.js"></script>
 </body>

@@ -16,29 +16,6 @@ body{
     position: relative;
     z-index: 0;
 }
-#searchResults {
-position: absolute;
-  top: 100%;
-  left: 0;
-  right: 0;
-  z-index: 1000;
-  width: 100%;
-  max-height: 200px;
-  overflow-y: auto;
-  background: white;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-  border-radius: 4px;
-  }
-
-  #searchResults li {
-    font-size: 0.9rem;
-    padding: 8px 12px;
-    cursor: pointer;
-  }
-
-  #searchResults li:hover {
-    background-color: #f0f0f0;
-  }
 .navbar-custom {
   background-color: #07F468;
 }
@@ -319,4 +296,4 @@ h2 {
         height: 100%;
         overflow-x: hidden !important;
       }
-}
+}   

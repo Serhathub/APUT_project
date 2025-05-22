@@ -1,0 +1,24 @@
+<div class="dropdown">
+    <button class="btn btn-link user-icon-btn dropdown-toggle" type="button" id="userDropdown" data-bs-toggle="dropdown"
+      aria-expanded="false">
+      <i class="bi bi-person-circle"></i>
+    </button>
+    <ul class="dropdown-menu dropdown-menu-end" aria-labelledby="userDropdown">
+      <li><a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#profileModal">Profiel</a></li>
+      <li>
+        <hr class="dropdown-divider">
+      </li>
+      <li><a class="dropdown-item" href="Quiz-Page">Game Pagina</a></li>
+      <li><a class="dropdown-item" href="favorieten">Favoriete Clubs</a></li>
+      <li><a class="dropdown-item" href="favorieteleagues">Favoriete League</a></li>
+      <li><a class="dropdown-item" href="blacklistedPage">Blacklisted Clubs</a></li>
+      <li>
+        <hr class="dropdown-divider">
+      </li>
+      <li>
+        <form action="/logout" method="POST" class="d-inline">
+          <button type="submit" class="dropdown-item">Uitloggen</button>
+        </form>
+      </li>
+    </ul>
+  </div>
