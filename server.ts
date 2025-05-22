@@ -6,7 +6,7 @@ import bcrypt from "bcrypt";
 import { error } from "console";
 import session from 'express-session';
 import 'express-session';
-import { User, Club, FavoriteClub, BlacklistedClub, Player, Coach, Area } from "./types";
+import { User, Club, FavoriteClub, BlacklistedClub, Player, Coach, Area, League } from "./types";
 
 declare module 'express-session' {
   interface SessionData {
@@ -204,6 +204,7 @@ app.get('/favorieten', requireLogin, async (req, res) => {
 });
 app.get("/favorieten/club/:id", requireLogin, async (req, res) => {
   const clubsCol = database.collection<Club>("teams");
+  const leaguesCol = database.collection<League>("leagues");
   const usersCol = database.collection<User>("users");
 
   const userId = new ObjectId(req.session.userId);
@@ -217,14 +218,15 @@ app.get("/favorieten/club/:id", requireLogin, async (req, res) => {
   }
 
   const seen = user?.favorites?.find((f: FavoriteClub) => f.clubId === clubId)?.seen || 0;
-
+  const league = await leaguesCol.findOne({ code: club.league }); 
   const squad = club.squad || [];
   const lineup = [...squad].slice(0, 11);
 
   res.render("clubDetail", {
     club,
     seen,
-    lineup
+    lineup,
+    leagueName: league?.name || "-"
   });
 });
 

@@ -46,6 +46,7 @@ export interface Club {
   founded: number;
   clubColors: string;
   venue: string;
+  runningCompetitions: League[]
   lastUpdated: string;
   coach?: Coach;
   squad?: Player[];
