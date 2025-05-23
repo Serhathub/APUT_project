@@ -49,12 +49,38 @@
       </ul>
     </div>
     </h1>
-    <div class="container mt-5">
-      <div id="emptyMessage" class="alert alert-danger text-center" style="display: none;">
-        Je hebt geen blacklisted clubs.
+     <div class="container mt-5">
+    <div class="mb-3">
+      <input type="text" id="clubNameInput" class="form-control" placeholder="Zoek club op naam..." />
+      <ul id="searchResults" class="list-group mt-2"></ul>
     </div>
-      <div id="blacklistClubList" class="list-group"></div>
-    </div>
+<% if (clubs.length === 0) { %>
+  <div class="alert alert-danger text-center" id="emptyMessage">Je hebt geen blacklisted clubs.</div>
+<% } %>
+  <div id="blacklistClubList" class="list-group">
+    <% clubs.forEach(club => { %>
+      <div class="list-group-item d-flex align-items-center justify-content-between">
+  <div class="d-flex align-items-center">
+    <img src="<%= club.crest %>" alt="<%= club.name %>" class="me-3" width="60" height="60">
+    <strong class="fs-5"><%= club.name %></strong>
+  </div>
+
+  <form action="/api/blacklist/update/<%= club.id %>" method="POST" class="d-flex align-items-center justify-content-center" style="flex: 1;">
+    <input type="text" name="reason" class="form-control me-2" value="<%= club.reason %>" style="max-width: 300px;">
+    <button type="submit" class="btn btn-warning">Update reden</button>
+  </form>
+
+  <form action="/api/blacklist/delete/<%= club.id %>" method="POST">
+    <button type="submit" class="btn btn-danger">Verwijder</button>
+  </form>
+</div>
+
+    <% }) %>
+  </div>
+
+
+    <div id="blacklistClubList" class="list-group"></div>
+  </div>
     <div
       class="modal fade"
       id="profileModal"
