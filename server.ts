@@ -159,8 +159,28 @@ app.get('/registratie', (req, res) => {
   res.render('registratie', { pageTitle: 'Registratie' });
 });
 
-app.get('/Quiz-Page', requireLogin, (req, res) => {
-  res.render('Quiz-Page', { pageTitle: 'FIFA Quiz_Page' });
+app.get('/Quiz-Page', requireLogin, async (req, res) => {
+  // 1) Haal de ingelogde gebruiker op
+  const usersCol = database.collection("users");
+  const _id = new ObjectId(req.session.userId as string);
+  const user = await usersCol.findOne({ _id });
+
+  // 2) Bouw maskedPassword (zoals op je landing)
+  let maskedPassword = "";
+  if (user?.password) {
+    const maxStars = 15;
+    maskedPassword = "*".repeat(
+      Math.min(user.password.length, maxStars)
+    );
+  }
+
+  // 3) Render met alle variabelen
+  res.render('Quiz-Page', {
+    pageTitle: 'FIFA Quiz_Page',
+    user,
+    isLoggedIn: true,
+    maskedPassword
+  });
 });
 
 app.get('/favorieten', requireLogin, async (req, res) => {
