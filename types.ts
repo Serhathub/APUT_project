@@ -16,6 +16,7 @@ export interface User {
   createdAt: Date;
   favorites: FavoriteClub[];
   blacklistedClubs: BlacklistedClub[];
+  highscore?: number;
 }
 
 export interface Coach {

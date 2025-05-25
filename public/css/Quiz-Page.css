@@ -5,6 +5,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
+  overflow: hidden;
 }
 
 body::before {
@@ -55,31 +56,6 @@ body.modal-open {
   display: none;
 }
 
-.content-container {
-  min-height: calc(100vh - 70px);
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  padding: 20px;
-}
-
-.game-box {
-  width: 85%;
-  max-width: 900px;
-  background-color: white;
-  border-radius: 12px;
-  box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-  padding: 30px;
-  display: block;
-}
-
-.game-header {
-  font-size: 1.75rem;
-  font-weight: bold;
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
 .modal-body input[readonly] {
   background-color: #e9e9e9 !important;
   border: 1px solid #ccc;
@@ -111,124 +87,82 @@ body.modal-open {
   background-color: #c82333;
 }
 
-/* Verberg secties standaard */
-.hidden {
-  display: none !important;
+#options-container .option-btn {
+  height: 60px;
+  font-size: 1rem;
 }
 
-/* Logo-container positioneert reaction-knoppen */
-.logo-container {
-  width: 35%;
+/* 1) Maak de quiz-box lichtgrijs */
+#quiz-box {
+  background-color: #e0e2e5 !important;
 }
 
-/* Reaction-knoppen alleen zichtbaar bij hover */
-.logo-container .reaction {
-  display: none;
-  position: absolute;
-  top: 0;
-  right: 0;
-}
-.logo-container:hover .reaction {
-  display: flex;
-  gap: 0.5rem;
+.club-photo {
+  width: 80%;
+  margin: 0 auto;
+  display: block;
+  object-fit: cover;
+  border-radius: 5px;
 }
 
-/* Stijl de emblemen */
-.quiz-emblem {
-  max-width: 150px;
-  height: auto;
-}
-
-/* Knoppen in de opties-grid */
-#club-options .col-6,
-#league-options .col-6 {
-  display: flex;
-  justify-content: center;
-}
-
+/* 2) Override de antwoord-knoppen */
 .option-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 250px;
-  padding: 0.5rem 1rem;
-  padding-right: 0.5rem;
-  font-size: 1.1rem;
-  border-radius: 0.75rem;
-  background-color: #07f468;
-  transition: background 0.2s;
-  white-space: normal;
-  text-align: center;
+  /* vaste groene achtergrond + zwarte tekst */
+  background-color: #07F468;
+  color: #000;
+  border: none;
 }
 
-.option-btn:hover {
+/* 3) Hover-state: iets donkerder groen */
+.option-btn:hover,
+.option-btn:focus {
+  background-color: #06c15e;
+  color: #000;
+}
+
+/* 4) Zorg dat de standaard outline-effecten niet doorschijnen */
+.option-btn:focus {
+  box-shadow: 0 0 0 0.2rem rgba(7, 244, 104, 0.5);
+}
+
+#save-score {
+  background-color: #07F468;
+  color: #000;
+  border: none;
+}
+#save-score:hover,
+#save-score:focus {
+  background-color: #06c15e;
+  color: #000;
+}
+
+#thumbs-up,
+#thumbs-down {
+  border: none;
+  color: #000;               /* zwarte icon/text */
+  font-size: 1.5rem;
+  /* vaste achtergrond: groen voor 👍, rood voor 👎 */
+}
+#thumbs-up {
+  background-color: #07F468;
+}
+#thumbs-down {
+  background-color: #dc3545;
+}
+
+/* 3) Hover-states: iets donkerder */
+#thumbs-up:hover,
+#thumbs-up:focus {
   background-color: #06c15e;
 }
-
-/* Eindscreen centered */
-#end-screen {
-  text-align: center;
+#thumbs-down:hover,
+#thumbs-down:focus {
+  background-color: #c82333;
 }
 
-.club-layout {
-  display: flex;
-  align-items: flex-start;
-  justify-content: flex-start;
-  gap: 0.5rem;
+/* 4) Zorg dat de icon-kleur zwart blijft */
+#thumbs-up i,
+#thumbs-down i {
+  color: #000;
 }
 
-.options-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 0.5rem;
-  width: auto;
-}
-
-.hidden { display: none !important; }
-.quiz-emblem {
-  max-width: 120px;
-  height: auto;
-  border-radius: 0.5rem;
-}
-
-/* --- Mobile --- */
-@media (max-width: 768px) {
-  .row > div {
-    flex: 0 0 100%;
-    max-width: 100%;
-  }
-  
-  .game-box {
-    width: 95%;
-    max-width: 100%;
-    max-height: 90vh;
-    overflow-y: auto;
-    padding: 8px;
-    margin: 0 auto;
-  }
-
-  .popup {
-    font-size: 1.3rem;
-  }
-  
-  .dropdown-item {
-    font-size: 1.5rem;
-    padding: 10px 20px;
-  }
-
-  .modal-title {
-    font-size: 1.8rem;
-  }
-  
-  .modal-body label {
-    font-size: 1.5rem;
-  }
-  
-  .modal-body .form-control {
-    font-size: 1.5rem;
-  }
-  .modal-footer button {
-    font-size: 1.3rem;
-    padding: 0.75rem 1.5rem;
-  }
-}

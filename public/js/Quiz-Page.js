@@ -1,228 +1,268 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  const popupClose = document.querySelector(".popup-close");
-  if (popupClose) {
-    popupClose.addEventListener("click", () => {
-      document.getElementById("popup").style.display = "none";
-    });
-  }
-
   const editProfileBtn   = document.getElementById("editProfileBtn");
   const saveProfileBtn   = document.getElementById("saveProfileBtn");
   const cancelProfileBtn = document.getElementById("cancelProfileBtn");
   const usernameInput    = document.getElementById("profileUsername");
   const emailInput       = document.getElementById("profileEmail");
-  const profileModalEl   = document.getElementById('profileModal');
+  const profileModalEl   = document.getElementById("profileModal");
+  const profileHighscore = document.getElementById("profileHighscore");
+
+  profileModalEl.addEventListener('show.bs.modal', () => {
+  fetch("/api/highscore")
+    .then(r => r.json())
+    .then(data => {
+      highscore = data.highscore;
+      highscoreEl.textContent = highscore;
+      profileHighscore.value = highscore;
+    });
+});
 
   if (usernameInput && emailInput) {
-    const originalUsername = usernameInput.value;
-    const originalEmail    = emailInput.value;
+    const origUser  = usernameInput.value;
+    const origEmail = emailInput.value;
 
-    editProfileBtn?.addEventListener("click", () => {
-      usernameInput.readOnly = false;
-      emailInput.readOnly    = false;
-      usernameInput.style.backgroundColor = "#fff";
-      emailInput.style.backgroundColor    = "#fff";
-      editProfileBtn.style.display   = "none";
-      cancelProfileBtn.style.display = "inline-block";
-      saveProfileBtn.style.display   = "inline-block";
+    editProfileBtn.addEventListener("click", () => {
+      usernameInput.readOnly = emailInput.readOnly = false;
+      usernameInput.style.backgroundColor = emailInput.style.backgroundColor = "#fff";
+      editProfileBtn.style.display = "none";
+      cancelProfileBtn.style.display = saveProfileBtn.style.display = "inline-block";
     });
 
-    saveProfileBtn?.addEventListener("click", () => {
-      document.getElementById("profileForm").submit();
-      usernameInput.readOnly = true;
-      emailInput.readOnly    = true;
-      usernameInput.style.backgroundColor = "#e9e9e9";
-      emailInput.style.backgroundColor    = "#e9e9e9";
-      saveProfileBtn.style.display   = "none";
-      cancelProfileBtn.style.display = "none";
-      editProfileBtn.style.display   = "inline-block";
+    saveProfileBtn.addEventListener("click", () =>
+      document.getElementById("profileForm").submit()
+    );
+
+    cancelProfileBtn.addEventListener("click", () => {
+      usernameInput.value = origUser;
+      emailInput.value    = origEmail;
+      usernameInput.readOnly = emailInput.readOnly = true;
+      usernameInput.style.backgroundColor = emailInput.style.backgroundColor = "#e9e9e9";
+      saveProfileBtn.style.display = cancelProfileBtn.style.display = "none";
+      editProfileBtn.style.display = "inline-block";
     });
 
-    cancelProfileBtn?.addEventListener("click", () => {
-      usernameInput.value   = originalUsername;
-      emailInput.value      = originalEmail;
-      usernameInput.readOnly = true;
-      emailInput.readOnly    = true;
-      usernameInput.style.backgroundColor = "#e9e9e9";
-      emailInput.style.backgroundColor    = "#e9e9e9";
-      saveProfileBtn.style.display   = "none";
-      cancelProfileBtn.style.display = "none";
-      editProfileBtn.style.display   = "inline-block";
-    });
-
-    profileModalEl?.addEventListener("hidden.bs.modal", () => {
-      usernameInput.value   = originalUsername;
-      emailInput.value      = originalEmail;
-      usernameInput.readOnly = true;
-      emailInput.readOnly    = true;
-      usernameInput.style.backgroundColor = "#e9e9e9";
-      emailInput.style.backgroundColor    = "#e9e9e9";
-      saveProfileBtn.style.display   = "none";
-      cancelProfileBtn.style.display = "none";
-      editProfileBtn.style.display   = "inline-block";
+    profileModalEl.addEventListener("hidden.bs.modal", () => {
+      usernameInput.value = origUser;
+      emailInput.value    = origEmail;
+      usernameInput.readOnly = emailInput.readOnly = true;
+      usernameInput.style.backgroundColor = emailInput.style.backgroundColor = "#e9e9e9";
+      saveProfileBtn.style.display = cancelProfileBtn.style.display = "none";
+      editProfileBtn.style.display = "inline-block";
     });
   }
 
-  const logoutForm = document.querySelector('form[action="/logout"]');
-  if (logoutForm) {
-    logoutForm.addEventListener('submit', () => {
+  // ——————————————————————
+  // Quiz logic
+  // ——————————————————————
+  const quizBox          = document.getElementById("quiz-box");
+  const startScreen      = document.getElementById("start-screen");
+  const questionScreen   = document.getElementById("question-screen");
+  const badgeImg         = document.getElementById("badge-img");
+  const optionsContainer = document.getElementById("options-container");
+  const thumbsUpBtn      = document.getElementById("thumbs-up");
+  const thumbsDownBtn    = document.getElementById("thumbs-down");
+  const blacklistModal   = new bootstrap.Modal(document.getElementById("blacklistModal"));
+  const reasonInput      = document.getElementById("blacklist-reason");
+  const confirmBlacklist = document.getElementById("confirm-blacklist");
+  const endScreen        = document.getElementById("end-screen");
+  const scoreEl          = document.getElementById("score");
+  const highscoreEl      = document.getElementById("highscore");
+  const saveNameCont     = document.getElementById("save-name-container");
+  const playerNameInput  = document.getElementById("player-name");
+  const saveScoreBtn     = document.getElementById("save-score");
+  const playAgainBtn     = document.getElementById("play-again");
+
+  let clubs = [], leagues = [];
+  let currentType = "club";
+  let correctId = null;
+  let score = 0;
+  let highscore = 0;
+  fetch("/api/highscore")
+    .then(r => r.json())
+    .then(data => {
+      highscore = data.highscore;
+      highscoreEl.textContent = highscore;
     });
+
+  // fetch data
+  Promise.all([
+    fetch("/api/quiz/clubs").then(r => r.json()),
+    fetch("/api/quiz/leagues").then(r => r.json())
+  ]).then(([c, l]) => { clubs = c; leagues = l; });
+
+  // hide thumbs initially
+  thumbsUpBtn.style.display = thumbsDownBtn.style.display = "none";
+
+  // helper: show popup message
+  function showPopup(message, type = 'success') {
+    const popup = document.createElement('div');
+    popup.className = `alert alert-${type} position-absolute start-50 translate-middle-x`;
+    popup.style.bottom = '100%';
+    popup.style.marginBottom = '-170px';
+    popup.textContent = message;
+    quizBox.appendChild(popup);
+    setTimeout(() => popup.remove(), 5000);
   }
 
- console.log("⚡ Quiz-Page.js geladen");
-
-  // 1) Data
-  const clubs = [
-    { name: "Real Madrid", img: "/Assets/Realmadridlogo.png" },
-    { name: "PSG",          img: "/Assets/psglogo.png" },
-    { name: "FC Barcelona", img: "/Assets/barcalogo.png" },
-    { name: "Arsenal",      img: "/Assets/arsenallogo.png" }
-  ];
-  const leagues = [
-    { name: "Premier League", img: "/Assets/premierleague.png" },
-    { name: "La Liga",        img: "/Assets/laliga.png" },
-    { name: "Serie A",        img: "/Assets/seriea.png" },
-    { name: "Bundesliga",     img: "/Assets/bundesliga.png" }
-  ];
-
-  // 2) State
-  let score         = 0;
-  let highscore     = +localStorage.getItem("highscore") || 0;
-  let favLeague     = null;
-  const blacklisted = new Set();
-
-  // 3) Elementen
-  const roundClub      = el("round-club");
-  const clubEmblem     = el("club-emblem");
-  const clubOpts       = el("club-options");
-  const clubFavBtn     = el("club-fav");
-  const clubBlBtn      = el("club-bl");
-  const reasonBox      = el("blacklist-reason");
-  const reasonInput    = el("reason-input");
-  const reasonOkBtn    = el("reason-ok");
-
-  const roundLeague    = el("round-league");
-  const leagueEmblem   = el("league-emblem");
-  const leagueOpts     = el("league-options");
-  const leagueFavBtn   = el("league-fav");
-
-  const endScreen      = el("end-screen");
-  const scoreDisp      = el("score-display");
-  const highscoreDisp  = el("highscore-display");
-  const newHsBox       = el("new-highscore");
-  const nameInput      = el("name-input");
-  const saveScoreBtn   = el("save-score");
-  const playAgainBtn   = el("play-again");
-
-  // Helpers
-  function el(id) { return document.getElementById(id); }
-  function shuffle(arr) { return arr.sort(() => .5 - Math.random()); }
-  function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
-
-  // 4) Flow
-  function startQuiz() {
+  // START QUIZ
+  document.getElementById("start-btn").addEventListener("click", () => {
     score = 0;
-    blacklisted.clear();
-    favLeague = null;
-    showClubRound();
-  }
+    currentType = "club";
+    startScreen.classList.add("d-none");
+    endScreen.classList.add("d-none");
+    nextQuestion();
+  });
 
-  function showClubRound() {
-    // Toon alleen club
-    roundClub.classList.remove("hidden");
-    roundLeague.classList.add("hidden");
-    endScreen.classList.add("hidden");
-    reasonBox.classList.add("hidden");
+  function nextQuestion() {
+    // reset UI
+    questionScreen.classList.remove("d-none");
+    thumbsUpBtn.style.display = thumbsDownBtn.style.display = "none";
     reasonInput.value = "";
 
-    // Kies club
-    const club = pick(clubs.filter(c => !blacklisted.has(c.name)));
-    clubEmblem.src = club.img;
-    clubEmblem.alt = club.name;
+    // choose 4 random
+    const pool = shuffle(currentType === "club" ? clubs : leagues).slice(0,4);
+    const choice = pool[Math.floor(Math.random() * pool.length)];
+    correctId = choice.id;
 
-    // Favoriet (kun je opslaan) en blacklist
-    clubFavBtn.onclick = () => console.log("Favoriete club:", club.name);
-    clubBlBtn.onclick  = () => reasonBox.classList.remove("hidden");
-    reasonOkBtn.onclick = () => {
-      blacklisted.add(club.name);
-      showClubRound();
-    };
+    // show badge
+    badgeImg.src = choice.crest || choice.emblem;
+    badgeImg.alt = choice.name;
+    badgeImg.style.cursor = "pointer";
 
-    // Opties
-    const opts = shuffle([club]
-      .concat(shuffle(clubs.filter(c => c.name !== club.name)).slice(0,3))
-    );
-    clubOpts.innerHTML = "";
-    opts.forEach(o => {
-      const col = document.createElement("div");
-      col.className = "col-6";
+    // render options
+    optionsContainer.innerHTML = "";
+    pool.forEach(opt => {
       const btn = document.createElement("button");
-      btn.className = "option-btn";
-      btn.textContent = o.name;
-      btn.onclick = () =>
-        o.name === club.name
-          ? (score++, showLeagueRound())
-          : endQuiz();
+      btn.className = "btn btn-outline-primary w-100 option-btn";
+      btn.textContent = opt.name;
+      btn.dataset.id = opt.id;
+      btn.disabled = false;
+      const col = document.createElement("div");
+      col.className = "col-6 mb-2";
       col.appendChild(btn);
-      clubOpts.appendChild(col);
+      optionsContainer.appendChild(col);
     });
   }
 
-  function showLeagueRound() {
-    roundClub.classList.add("hidden");
-    roundLeague.classList.remove("hidden");
-    endScreen.classList.add("hidden");
+  // option clicked
+  optionsContainer.addEventListener("click", e => {
+    if (!e.target.matches(".option-btn")) return;
+    const picked = Number(e.target.dataset.id);
+    document.querySelectorAll(".option-btn").forEach(b => b.disabled = true);
 
-    const league = pick(leagues);
-    leagueEmblem.src = league.img;
-    leagueEmblem.alt = league.name;
+    if (picked === correctId) {
+      score++;
+      currentType = (currentType === "club" ? "league" : "club");
+      nextQuestion();
+    } else {
+      endQuiz();
+    }
+  });
 
-    leagueFavBtn.disabled = !!favLeague;
-    leagueFavBtn.onclick = () => {
-      if (!favLeague) {
-        favLeague = league.name;
-        leagueFavBtn.disabled = true;
-      }
-    };
+  // badge click: toggle thumbs
+  badgeImg.addEventListener("click", () => {
+    if (thumbsUpBtn.style.display === "none") {
+      thumbsUpBtn.style.display = "inline-block";
+      thumbsDownBtn.style.display = currentType === "club" ? "inline-block" : "none";
+    } else {
+      thumbsUpBtn.style.display = thumbsDownBtn.style.display = "none";
+    }
+  });
 
-    const opts = shuffle([league]
-      .concat(shuffle(leagues.filter(l => l.name !== league.name)).slice(0,3))
-    );
-    leagueOpts.innerHTML = "";
-    opts.forEach(o => {
-      const col = document.createElement("div");
-      col.className = "col-6";
-      const btn = document.createElement("button");
-      btn.className = "option-btn";
-      btn.textContent = o.name;
-      btn.onclick = () =>
-        o.name === league.name ? showClubRound() : endQuiz();
-      col.appendChild(btn);
-      leagueOpts.appendChild(col);
+  // thumbs up
+  thumbsUpBtn.addEventListener("click", () => {
+    if (currentType === "club") {
+      fetch("/api/favorites", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ clubId: correctId })
+      }).then(res => {
+        if (res.ok) showPopup("Club toegevoegd aan favorieten", "success");
+      }).finally(() => {
+        thumbsUpBtn.style.display = thumbsDownBtn.style.display = "none";
+      });
+    } else {
+      fetch("/api/favoriteLeague", {
+        method: "POST",
+        headers: {"Content-Type":"application/json"},
+        body: JSON.stringify({ leagueId: correctId })
+      }).then(res => {
+        if (res.status === 409) showPopup("Je hebt al een League in je favorieten staan", "warning");
+        else if (res.ok) showPopup("League toegevoegd aan favorieten", "success");
+      }).finally(() => {
+        thumbsUpBtn.style.display = thumbsDownBtn.style.display = "none";
+      });
+    }
+  });
+
+  // thumbs down (club only)
+  thumbsDownBtn.addEventListener("click", () => {
+    if (currentType === "club") {
+      blacklistModal.show();
+    }
+  });
+
+  // confirm blacklist
+  confirmBlacklist.addEventListener("click", () => {
+    fetch("/api/blacklist", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        clubId: correctId,
+        reason: reasonInput.value.trim()
+      })
+    }).then(res => {
+      if (res.ok) showPopup("Club is geblacklist", "danger");
+    }).finally(() => {
+      blacklistModal.hide();
+      thumbsUpBtn.style.display = thumbsDownBtn.style.display = "none";
     });
-  }
+  });
 
   function endQuiz() {
-    roundClub.classList.add("hidden");
-    roundLeague.classList.add("hidden");
-    endScreen.classList.remove("hidden");
-
-    scoreDisp.textContent     = score;
-    highscoreDisp.textContent = highscore;
-    if (score > highscore) newHsBox.classList.remove("hidden");
+    questionScreen.classList.add("d-none");
+    thumbsUpBtn.style.display = thumbsDownBtn.style.display = "none";
+    scoreEl.textContent = score;
+    endScreen.classList.remove("d-none");
+    if (score > highscore) {
+      saveNameCont.classList.remove("d-none");
+    }
   }
 
-  saveScoreBtn.onclick = () => {
-    highscore = score;
-    localStorage.setItem("highscore", score);
-    localStorage.setItem("highscoreName", nameInput.value);
-    newHsBox.classList.add("hidden");
-    highscoreDisp.textContent = highscore;
-  };
+  // save score
+  saveScoreBtn.addEventListener("click", () => {
+  const name = playerNameInput.value.trim();
+  if (!name) return;
 
-  playAgainBtn.onclick = startQuiz;
+  // stuur naar server
+  fetch("/api/highscore", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ score })
+  })
+    .then(res => {
+      if (res.ok) {
+        showPopup("Highscore opgeslagen!", "success");
+        highscore = score;
+        highscoreEl.textContent = highscore;
+        saveNameCont.classList.add("d-none");
+      } else {
+        showPopup("Kon highscore niet opslaan", "danger");
+      }
+    });
+});
 
-  // Kick off
-  startQuiz();
+  // play again
+  playAgainBtn.addEventListener("click", () => {
+    score = 0;
+    endScreen.classList.add("d-none");
+    currentType = "club";
+    nextQuestion();
+  });
+
+  // shuffle helper
+  function shuffle(arr) {
+    return arr.sort(() => Math.random() - 0.5);
+  }
 });

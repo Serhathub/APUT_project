@@ -159,29 +159,56 @@ app.get('/registratie', (req, res) => {
   res.render('registratie', { pageTitle: 'Registratie' });
 });
 
-app.get('/Quiz-Page', requireLogin, async (req, res) => {
-  // 1) Haal de ingelogde gebruiker op
-  const usersCol = database.collection("users");
-  const _id = new ObjectId(req.session.userId as string);
+// Haal alle clubs (zonder blacklisted) voor de quiz
+app.get("/api/quiz/clubs", requireLogin, async (req, res) => {
+  const clubsCol = database.collection<Club>("teams");
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId!);
+  const user = await usersCol.findOne({ _id });
+  const blacklistedIds = user?.blacklistedClubs?.map(b => b.clubId) || [];
+
+  const clubs = await clubsCol
+    .find({ id: { $nin: blacklistedIds } },
+          { projection: { id: 1, name: 1, crest: 1 } })
+    .toArray();
+  res.json(clubs);
+});
+
+// Haal alle leagues voor de quiz
+app.get("/api/quiz/leagues", requireLogin, async (req, res) => {
+  const leaguesCol = database.collection<League>("leagues");
+  const leagues = await leaguesCol
+    .find({}, { projection: { id: 1, name: 1, emblem: 1 } })
+    .toArray();
+  res.json(leagues);
+});
+
+app.get("/Quiz-Page", requireLogin, async (req, res) => {
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId!);
   const user = await usersCol.findOne({ _id });
 
-  // 2) Bouw maskedPassword (zoals op je landing)
-  let maskedPassword = "";
-  if (user?.password) {
-    const maxStars = 15;
-    maskedPassword = "*".repeat(
-      Math.min(user.password.length, maxStars)
-    );
+  if (!user) {
+    // Als er toch geen user is, sturen we terug naar login
+    return res.redirect("/login");
   }
 
-  // 3) Render met alle variabelen
-  res.render('Quiz-Page', {
-    pageTitle: 'FIFA Quiz_Page',
+  // Zorg dat er altijd een highscore-property is (default 0)
+  user.highscore = user.highscore || 0;
+
+  // Masked password
+  let maskedPassword = "";
+  const maxStars = 15;
+  const starCount = Math.min(user.password.length, maxStars);
+  maskedPassword = "*".repeat(starCount);
+
+  // Render met een échte User
+  res.render("Quiz-Page", {
     user,
-    isLoggedIn: true,
     maskedPassword
   });
 });
+
 
 app.get('/favorieten', requireLogin, async (req, res) => {
   const usersCol = database.collection<User>("users");
@@ -520,6 +547,7 @@ app.post("/api/favorites/seen", requireLogin, async (req, res) => {
 
   res.status(200).json({ message: "Seen count verhoogd" });
 });
+
 app.post("/api/blacklist", requireLogin, async (req, res) => {
   const { clubId, reason } = req.body;
   const parsedClubId = Number(clubId);
@@ -579,28 +607,35 @@ app.post("/api/blacklist/update/:clubId", requireLogin, async (req, res) => {
 
 app.post("/profile", requireLogin, async (req, res) => {
   const { username, email } = req.body;
-  const usersCol = database.collection("users");
-  const _id = typeof req.session.userId === "string"
-    ? new ObjectId(req.session.userId)
-    : req.session.userId;
+  const usersCol = database.collection<User>("users");
+  // altijd een ObjectId van de sessie-string maken
+  const _id = new ObjectId(req.session.userId as string);
 
+  // check op conflict
   const conflict = await usersCol.findOne({
     _id: { $ne: _id },
     $or: [{ username }, { email }]
   });
   if (conflict) {
-    return res.status(409).render("landing", {
+    // hier kun je nog error-handling doen
+    return res.status(409).render("Quiz-Page", {
       user: { _id, username, email },
-      isLoggedIn: true,
+      maskedPassword: "",
       error: conflict.username === username
         ? "Gebruikersnaam al in gebruik"
         : "Email al in gebruik"
     });
   }
 
+  // update username + email
   await usersCol.updateOne({ _id }, { $set: { username, email } });
-  res.redirect("/");
+
+  // redirect terug naar de pagina waar het formulier vandaan kwam
+  const back = req.get("Referer") || "/Quiz-Page";
+  res.redirect(back);
 });
+
+
 app.post("/api/blacklist/delete/:clubId", requireLogin, async (req, res) => {
   const clubId = Number(req.params.clubId);
   const usersCol = database.collection<User>("users");
@@ -630,6 +665,35 @@ app.post("/api/favorites/delete/:clubId", requireLogin, async (req, res) => {
   );
 
   res.redirect("/favorieten");
+});
+
+app.post("/api/highscore", requireLogin, async (req, res) => {
+  const { score } = req.body;
+  const parsed = Number(score);
+
+  if (isNaN(parsed)) {
+    res.status(400).json({ error: "Ongeldige score" });
+    return;
+  }
+
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId!);
+
+  await usersCol.updateOne(
+    { _id },
+    { $max: { highscore: parsed } }
+  );
+
+  res.status(200).json({ message: "Highscore geüpdatet" });
+  return;
+});
+
+app.get("/api/highscore", requireLogin, async (req, res) => {
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId!);
+  const user = await usersCol.findOne({ _id });
+  const hs = user?.highscore ?? 0;
+  res.json({ highscore: hs });
 });
 
 app.listen(PORT, () => {
