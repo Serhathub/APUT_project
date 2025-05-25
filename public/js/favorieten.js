@@ -12,7 +12,7 @@ searchInput.addEventListener("input", async () => {
   }
 
   try {
-    const res = await fetch(`/api/clubs/search?name=${encodeURIComponent(query)}`);
+    const res = await fetch(`/api/clubs/search?name=${encodeURIComponent(query)}&excludeBlacklist=true`);
     const clubs = await res.json();
 
     searchResults.innerHTML = "";
@@ -40,24 +40,7 @@ searchInput.addEventListener("input", async () => {
         }
 
         seenCounts[club.id] = 0;
-
-        const item = document.createElement("div");
-        item.className = "list-group-item";
-
-        item.innerHTML = `
-    <img src="${club.crest}" alt="${club.name}" class="me-3" />
-    <span class="club-name">${club.name}</span>
-    <div class="form-group d-inline ms-3">
-      <div>Aantal keer LIVE gezien: <span id="count-${club.id}">${seenCounts[club.id]}</span></div>
-      <button class="btn btn-secondary" onclick="incrementCount('${club.id}')">Gezien</button>
-      <button class="btn btn-danger" onclick="removeFavorite(${club.id})">Verwijder</button>
-    </div>
-    <a href="/favorieten/club/${club.id}" class="btn btn-dark float-end open-club">OPEN</a>
-  `;
-
-        document.getElementById("clubList").appendChild(item);
-        searchResults.innerHTML = "";
-        searchInput.value = "";
+        window.location.reload();
         const noFavMsg = document.querySelector(".no-favorite-msg");
         if (noFavMsg) noFavMsg.remove();
       };
