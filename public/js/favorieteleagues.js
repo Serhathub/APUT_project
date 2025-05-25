@@ -58,7 +58,11 @@ removeButtons.forEach((button) => {
     checkEmpty();
   });
 });
-
+    document.querySelector('.clubsDropdown').addEventListener('change', function () {
+      const selectedOption = this.options[this.selectedIndex];
+      const infoDiv = document.getElementById('clubInfo');
+      infoDiv.innerHTML = "<strong>Geselecteerde club:</strong> " + selectedOption.text;
+    });
 const editProfileBtn = document.getElementById("editProfileBtn");
 const saveProfileBtn = document.getElementById("saveProfileBtn");
 const cancelProfileBtn = document.getElementById("cancelProfileBtn");

@@ -8,6 +8,9 @@ export interface BlacklistedClub {
   clubId: number;
   reason: string;
 }
+export interface FavoriteLeague {
+  leagueId: number;
+}
 export interface User {
   _id?: ObjectId;
   username: string;
@@ -16,6 +19,7 @@ export interface User {
   createdAt: Date;
   favorites: FavoriteClub[];
   blacklistedClubs: BlacklistedClub[];
+  favoriteLeague: Number;
 }
 
 export interface Coach {

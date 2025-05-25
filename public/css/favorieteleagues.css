@@ -5,7 +5,7 @@ body::before {
   left: -20px;
   right: -20px;
   bottom: -20px;
-  background: url("./assets/fifaAchtergrond.png") no-repeat center center;
+  background: url("/Assets/fifaAchtergrond.png") no-repeat center center;
   background-size: cover;
   filter: blur(5px);
   z-index: -1;
@@ -22,8 +22,24 @@ h1 {
 label {
   font-size: 1rem;
 }
+.user-icon-btn {
+  font-size: 2rem;
+  border: none;
+  background: none;
+  color: #000;
+}
+.dropdown{
+    position: absolute;
+    right: 0px; 
+    top: 0px;
+    width: 70px;
+    height: 70px; 
+    cursor: pointer; 
+}
 
-
+.dropdown-toggle::after {
+  display: none;
+}
 .modal-body input[readonly] {
   background-color: #e9e9e9 !important;
   border: 1px solid #ccc;
