@@ -174,7 +174,10 @@ app.get('/favorieten', requireLogin, async (req, res) => {
     return res.render('favorieten', { pageTitle: 'Favorieten', clubs: [], search: req.query.search || '' });
   }
 
-  const clubIds = user.favorites.map(f => f.clubId);
+  const blacklistedIds = (user.blacklistedClubs || []).map(b => b.clubId);
+  const filteredFavorites = user.favorites.filter(fav => !blacklistedIds.includes(fav.clubId));
+
+  const clubIds = filteredFavorites.map(f => f.clubId);
   const allFavClubsMap = new Map();
   const fetchedClubs = await clubsCol.find({ id: { $in: clubIds } }).toArray();
   fetchedClubs.forEach(club => allFavClubsMap.set(club.id, club));
@@ -310,18 +313,23 @@ app.get("/api/favorites", requireLogin, async (req, res) => {
 
 app.get("/api/clubs/search", async (req, res) => {
   const name = req.query.name?.toString().toLowerCase();
-
+  const excludeBlacklist = req.query.excludeBlacklist === 'true';
+  const _id = new ObjectId(req.session.userId);
   if (!name) {
     res.status(400).json({ error: "Naam is verplicht." });
     return;
   }
 
-  try {
+  try {    
     const clubsCol = database.collection("teams");
-    const results = await clubsCol.find({
-      name: { $regex: new RegExp(name, "i") }
-    }).toArray();
-
+    const usersCol = database.collection<User>("users");
+    const filter: any = { name: { $regex: new RegExp(name, "i") } };
+      if (excludeBlacklist) {
+          const user = await usersCol.findOne({ _id });
+          const blacklistedIds = user?.blacklistedClubs?.map(b => b.clubId) || [];
+          filter.id = { $nin: blacklistedIds };
+    }
+    const results = await clubsCol.find(filter).toArray();
     res.json(results);
   } catch (err) {
     console.error("Club search DB error:", err);
@@ -517,7 +525,9 @@ app.post("/api/blacklist", requireLogin, async (req, res) => {
   }
   await usersCol.updateOne(
     { _id },
-    { $push: { blacklistedClubs: { clubId: parsedClubId, reason } } }
+    { $push: { blacklistedClubs: { clubId: parsedClubId, reason } }, 
+      $pull: { favorites: { clubId: parsedClubId } }
+    }
   );
 
   res.status(200).json({ message: "Club toegevoegd aan blacklist." });
@@ -582,6 +592,24 @@ app.post("/api/blacklist/delete/:clubId", requireLogin, async (req, res) => {
   );
 
   res.redirect("/blacklistedPage");
+});
+app.post("/api/favorites/delete/:clubId", requireLogin, async (req, res) => {
+  const clubId = Number(req.params.clubId);
+
+  if (isNaN(clubId)) {
+    res.status(400).json({ error: "Ongeldige clubId" });
+    return;
+  }
+
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId);
+
+  await usersCol.updateOne(
+    { _id },
+    { $pull: { favorites: { clubId } } }
+  );
+
+  res.redirect("/favorieten");
 });
 
 app.listen(PORT, () => {

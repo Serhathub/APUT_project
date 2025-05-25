@@ -12,7 +12,7 @@ searchInput.addEventListener("input", async () => {
   }
 
   try {
-    const res = await fetch(`/api/clubs/search?name=${encodeURIComponent(query)}`);
+    const res = await fetch(`/api/clubs/search?name=${encodeURIComponent(query)}&excludeBlacklist=true`);
     const clubs = await res.json();
 
     searchResults.innerHTML = "";
