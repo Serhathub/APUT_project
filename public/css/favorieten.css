@@ -39,30 +39,7 @@ position: absolute;
   #searchResults li:hover {
     background-color: #f0f0f0;
   }
-.navbar-custom {
-  background-color: #07F468;
-}
 
-.navbar-brand-custom {
-  color: #000;
-  font-weight: bold;
-  font-size: 2rem;
-  cursor: default;
-}
-.dropdown-item {
-  font-size: 1.2rem;
-}
-
-.dropdown-toggle::after {
-  display: none;
-}
-
-.user-icon-btn {
-  font-size: 2rem;
-  border: none;
-  background: none;
-  color: #000;
-}
 h1{
     background-color: #07F468; 
     color: black; 
@@ -140,57 +117,12 @@ h2 {
     font-size: large;
     font-weight: bold;
 }
-.profile-icon {
-    width: 70px;
-    height: 70px; 
-}
-.profile-icon:hover {
-    opacity: 0.61; 
-}
-.dropdown{
-    position: absolute;
-    right: 0px; 
-    top: 0px;
-    width: 70px;
-    height: 70px; 
-    cursor: pointer; 
-}
+
 .open-club {
   display: flex;
   align-items: center;
   justify-content: center;
 }
-.modal-body input[readonly] {
-    background-color: #e9e9e9 !important;
-    border: 1px solid #ccc;
-    color: #555;
-  }
-  
-  .modal-body input:not([readonly]) {
-    background-color: #fff;
-    border: 1px solid #07F468;
-  }
-  
-  #saveProfileBtn {
-    background-color: #07F468;
-    border: none;
-    color: #000;
-  }
-  
-  #saveProfileBtn:hover {
-    background-color: #06c15e;
-  }
-  
-  #cancelProfileBtn {
-    background-color: #dc3545;
-    border: none;
-    color: #000;
-  }
-  
-  #cancelProfileBtn:hover {
-    background-color: #c82333;
-  }
-
 
 @media (max-width: 992px){
     .row > div {

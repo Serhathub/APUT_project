@@ -126,6 +126,30 @@ function requireLogin(req: express.Request, res: express.Response, next: express
   next();
 }
 
+app.use(async (req, res, next) => {
+  if (req.session.userId) {
+    const usersCol = database.collection<User>('users');
+    const _id = new ObjectId(req.session.userId as string);
+    const user = await usersCol.findOne({ _id });
+    res.locals.user = user;
+    res.locals.isLoggedIn = true;
+    res.locals.navBrand = "FIFA Quiz";
+
+    if (user) {
+      const maxStars = 15;
+      const starCount = Math.min(user.password.length, maxStars);
+      res.locals.maskedPassword = '*'.repeat(starCount);
+    } else {
+      res.locals.maskedPassword = '';
+    }
+  } else {
+    res.locals.isLoggedIn = false;
+    res.locals.user = null;
+    res.locals.maskedPassword = '';
+  }
+  next();
+});
+
 app.get("/", async (req, res) => {
   let user = null;
   let maskedPassword = "";
@@ -211,6 +235,7 @@ app.get("/Quiz-Page", requireLogin, async (req, res) => {
 
 
 app.get('/favorieten', requireLogin, async (req, res) => {
+  res.locals.navBrand = 'Favoriete Clubs';
   const usersCol = database.collection<User>("users");
   const clubsCol = database.collection<Club>("teams");
 

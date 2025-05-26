@@ -25,68 +25,6 @@ body.modal-open {
   padding-right: 0 !important;
 }
 
-.navbar-custom {
-  background-color: #07F468;
-}
-
-.placeholder {
-  width: 30px;
-  background-color: #07F468;
-}
-
-.navbar-brand-custom {
-  color: #000;
-  font-weight: bold;
-  font-size: 2rem;
-  cursor: default;
-}
-
-.user-icon-btn {
-  font-size: 2rem;
-  border: none;
-  background: none;
-  color: #000;
-}
-
-.dropdown-item {
-  font-size: 1.2rem;
-}
-
-.dropdown-toggle::after {
-  display: none;
-}
-
-.modal-body input[readonly] {
-  background-color: #e9e9e9 !important;
-  border: 1px solid #ccc;
-  color: #555;
-}
-
-.modal-body input:not([readonly]) {
-  background-color: #fff;
-  border: 1px solid #07F468;
-}
-
-#saveProfileBtn {
-  background-color: #07F468;
-  border: none;
-  color: #000;
-}
-
-#saveProfileBtn:hover {
-  background-color: #06c15e;
-}
-
-#cancelProfileBtn {
-  background-color: #dc3545;
-  border: none;
-  color: #000;
-}
-
-#cancelProfileBtn:hover {
-  background-color: #c82333;
-}
-
 #options-container .option-btn {
   height: 60px;
   font-size: 1rem;
