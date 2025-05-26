@@ -596,6 +596,36 @@ app.post("/api/favorites", requireLogin, async (req, res) => {
 
   res.status(200).json({ message: "Club toegevoegd aan favorieten." });
 });
+
+app.post("/api/favoriteLeague", requireLogin, async (req, res) => {
+  const { leagueId } = req.body;
+  const parsed = Number(leagueId);
+  if (isNaN(parsed)) {
+    res.status(400).json({ error: "Ongeldig leagueId" });
+    return;
+  }
+
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId!);
+  const user = await usersCol.findOne({ _id });
+
+  if (!user) {
+    res.status(404).json({ error: "Gebruiker niet gevonden." });
+    return;
+  }
+  if (user.favoriteLeague) {
+    res.status(409).json({ error: "Je hebt al een League in je favorieten staan." });
+    return;
+  }
+
+  await usersCol.updateOne(
+    { _id },
+    { $set: { favoriteLeague: parsed } }
+  );
+
+  res.status(200).json({ message: "League toegevoegd aan favorieten." });
+});
+
 app.post("/api/favorites/seen", requireLogin, async (req, res) => {
   const clubId = Number(req.body.clubId);
   if (isNaN(clubId)) {

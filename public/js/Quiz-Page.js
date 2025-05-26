@@ -117,12 +117,16 @@ document.addEventListener("DOMContentLoaded", () => {
     } else {
       fetch("/api/favoriteLeague", {
         method: "POST",
-        headers: {"Content-Type":"application/json"},
+        headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ leagueId: correctId })
-      }).then(res => {
-        if (res.status === 409) showPopup("Je hebt al een League in je favorieten staan", "warning");
-        else if (res.ok) showPopup("League toegevoegd aan favorieten", "success");
-      }).finally(() => {
+      })
+      .then(res => res.json().then(data => ({ ok: res.ok, data })))
+      .then(({ ok, data }) => {
+        if (!ok) throw new Error(data.error);
+          showPopup(data.message, "success");
+      })
+      .catch(err => showPopup(err.message, "warning"))
+      .finally(() => {
         thumbsUpBtn.style.display = thumbsDownBtn.style.display = "none";
       });
     }
