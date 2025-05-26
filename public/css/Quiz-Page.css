@@ -21,8 +21,8 @@ body::before {
   z-index: -1;
 }
 
-body.modal-open {
-  padding-right: 0 !important;
+#main-container {
+  height: calc(100vh - 56px);
 }
 
 #options-container .option-btn {
@@ -30,9 +30,40 @@ body.modal-open {
   font-size: 1rem;
 }
 
-/* 1) Maak de quiz-box lichtgrijs */
 #quiz-box {
+  max-width: 600px;
   background-color: #e0e2e5 !important;
+}
+
+#play-again {
+  background-color: #07F468;
+  color: #000;
+  border: none;
+}
+
+#play-again:hover {
+  background-color: #06c15e;
+  color: #000;
+}
+
+#end-screen h3 ~ * {
+  margin-top: 1rem;
+}
+
+#end-screen p:nth-of-type(2) {
+  font-weight: bold;
+}
+
+.quiz-popup {
+  position: absolute;
+  bottom: 100%;
+  margin-bottom: -150px;
+}
+
+.badge-img {
+  max-height: 250px;
+  width: auto;
+  cursor: pointer;
 }
 
 .club-photo {
@@ -43,22 +74,18 @@ body.modal-open {
   border-radius: 5px;
 }
 
-/* 2) Override de antwoord-knoppen */
 .option-btn {
-  /* vaste groene achtergrond + zwarte tekst */
   background-color: #07F468;
   color: #000;
   border: none;
 }
 
-/* 3) Hover-state: iets donkerder groen */
 .option-btn:hover,
 .option-btn:focus {
   background-color: #06c15e;
   color: #000;
 }
 
-/* 4) Zorg dat de standaard outline-effecten niet doorschijnen */
 .option-btn:focus {
   box-shadow: 0 0 0 0.2rem rgba(7, 244, 104, 0.5);
 }
@@ -77,9 +104,8 @@ body.modal-open {
 #thumbs-up,
 #thumbs-down {
   border: none;
-  color: #000;               /* zwarte icon/text */
+  color: #000;
   font-size: 1.5rem;
-  /* vaste achtergrond: groen voor 👍, rood voor 👎 */
 }
 #thumbs-up {
   background-color: #07F468;
@@ -88,7 +114,6 @@ body.modal-open {
   background-color: #dc3545;
 }
 
-/* 3) Hover-states: iets donkerder */
 #thumbs-up:hover,
 #thumbs-up:focus {
   background-color: #06c15e;
@@ -98,7 +123,6 @@ body.modal-open {
   background-color: #c82333;
 }
 
-/* 4) Zorg dat de icon-kleur zwart blijft */
 #thumbs-up i,
 #thumbs-down i {
   color: #000;

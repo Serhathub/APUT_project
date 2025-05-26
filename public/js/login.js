@@ -1,24 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const forgotPasswordLink = document.getElementById("forgot-password-link");
-  const resetBtn = document.querySelector(".reset-btn");
-
-  if (forgotPasswordLink) {
-    forgotPasswordLink.addEventListener("click", (e) => {
-      e.preventDefault();
-      forgotPopup.style.display = "flex";
-    });
-  }
-
-  if (resetBtn) {
-    resetBtn.addEventListener("click", () => {
-      alert("Wachtwoord reset functionaliteit komt binnenkort!");
-      const resetModal = bootstrap.Modal.getInstance(document.getElementById("resetPasswordModal"));
-      if (resetModal) {
-        resetModal.hide();
-      }
-    });
-  }
-
+  
    document.querySelectorAll('.toggle-password').forEach(toggle => {
     toggle.addEventListener('click', function() {
       const input = document.getElementById(this.dataset.target);

@@ -20,7 +20,6 @@
 <body>
   <nav class="navbar navbar-custom">
     <div class="container-fluid d-flex justify-content-between align-items-center">
-      <div class="placeholder"></div>
       <span class="navbar-brand navbar-brand-custom mx-auto">WPL Games</span>
       <div style="width:30px;"></div>
     </div>
@@ -33,11 +32,11 @@
       <h2 class="text-center registration-title mb-4">Registratie</h2>
       <hr class="title-divider mb-4" />
 
-    <% if (typeof error !== 'undefined' && error) { %>
-      <div class="alert alert-danger text-center mb-3">
-        <%= error %>
+     <div id="errorAlert"
+        class="alert alert-danger text-center
+         <% if (typeof error === 'undefined' || !error) { %>d-none<% } %>">
+        <%= (typeof error !== 'undefined' && error) ? error : '' %>
       </div>
-    <% } %>
 
     <form id="registrationForm" action="/registratie" method="POST">
       <div class="row">
@@ -142,6 +141,10 @@
       </div>
           <button type="submit" class="btn registration-btn w-100 mt-3">Registreren</button>
       </form>
+        <p class="text-center mt-3 login-text">
+          Al een account?
+          <a href="/login" class="login-link">Login</a>
+        </p>
       </div>
     </div>
 

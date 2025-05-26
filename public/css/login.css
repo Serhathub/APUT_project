@@ -5,6 +5,7 @@ body {
   margin: 0;
   padding: 0;
   font-family: Arial, sans-serif;
+  overflow: hidden;
 }
 
 body::before {
@@ -78,21 +79,6 @@ body::before {
   background-color: #06c15e;
 }
 
-.forgot-password {
-  color: #07F468;
-  font-weight: bold;
-  text-decoration: none;
-}
-
-.forgot-password:hover {
-  text-decoration: underline;
-  color: #06c15e;
-}
-
-.popup p {
-  margin-top: 20px;
-}
-
 .register-container {
   font-size: 1.1rem;
   margin-top: 20px;
@@ -107,21 +93,6 @@ body::before {
 .register-link:hover {
   color: #06c15e;
   text-decoration: underline;
-}
-
-body.modal-open {
-  padding-right: 0 !important;
-}
-
-.reset-btn {
-  background-color: #07F468;
-  border: none;
-  color: #000;
-  font-weight: bold;
-}
-
-.reset-btn:hover {
-  background-color: #06c15e;
 }
 
 @media (max-width: 768px) {
@@ -144,7 +115,6 @@ body.modal-open {
     font-size: 1.2rem;
   }
 
-  .forgot-password,
   .register-container {
     font-size: 1.3rem;
   }
