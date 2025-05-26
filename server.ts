@@ -301,7 +301,8 @@ app.get("/favorieten/club/:id", requireLogin, async (req, res) => {
     club,
     seen,
     lineup,
-    leagueName: league?.name || "-"
+    leagueName: league?.name || "-",
+    navBrand: "Club details"
   });
 });
 
@@ -318,10 +319,10 @@ app.get("/favorieteleagues", requireLogin, async (req, res) => {
 if (!user?.favoriteLeague) {
     const leagues = await leaguesCol.find().toArray();
     return res.render('favorieteleagues', {
-      pageTitle: 'Favoriete League',
       league: null,
       clubs: [],
-      leagues 
+      leagues,
+      navBrand: "Favoriete League"
     });
   }
 
@@ -350,7 +351,8 @@ if (!user?.favoriteLeague) {
     clubs,
     leagues: [],
     blacklistedClubsInSpecificLeague,
-    selectedClub
+    selectedClub,
+    navBrand: "Favoriete League"
   });
 });
 app.get("/blacklistedPage", requireLogin, async (req, res) => {
@@ -361,8 +363,8 @@ app.get("/blacklistedPage", requireLogin, async (req, res) => {
   const user = await usersCol.findOne({ _id });
   if (!user || !user.blacklistedClubs || user.blacklistedClubs.length === 0) {
     return res.render("blacklistedPage", {
-      pageTitle: "Blacklisted Clubs",
-      clubs: []
+      clubs: [],
+      navBrand: "Blacklisted Clubs"
     });
   }
 
@@ -378,8 +380,8 @@ app.get("/blacklistedPage", requireLogin, async (req, res) => {
   });
 
   res.render("blacklistedPage", {
-    pageTitle: "Blacklisted Clubs",
-    clubs: enriched
+    clubs: enriched,
+    navBrand: "Blacklisted Clubs"
   });
 });
 

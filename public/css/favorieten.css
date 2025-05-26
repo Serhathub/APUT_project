@@ -54,10 +54,6 @@ h2 {
     text-align: center;
     margin: 0 auto; 
 }
-
-.container.mt-5 {
-    margin-top: 5px !important;
-}
 .list-group-item {
     background-color: #07F468; 
     color: white;
@@ -81,38 +77,11 @@ h2 {
 .club-name{
     font-size: 40px;
 }   
-.mb-4{
-    color: black;
-    top: 10px;
-}
 .mb-3 {
   position: relative;
   width: 350px;
 }
 
-.club-details{
-    display: flex; justify-content: space-between; align-items: flex-start;
-}
-.club-detail-box {
-    background-color: #07F468; 
-    border-radius: 10px; 
-    padding: 1rem; 
-}
-
-.club-header {
-    display: flex; 
-    justify-content: space-between;
-    align-items: center; 
-}
-
-.club-header img {
-    width: 200px; 
-    margin: 0 auto; 
-}
-
-.club-details p {
-    margin: 0.5rem 0; 
-}
 .form-group {
     font-size: large;
     font-weight: bold;
@@ -198,10 +167,6 @@ h2 {
     .list-group-item button:hover {
         background-color: gray;
     }
-    .club-header img {
-        width: 150px; 
-        margin: 0 auto; 
-    }
     .open-club {
         margin-left: auto; 
         width: 100px;
@@ -209,20 +174,7 @@ h2 {
     }
 }
 @media (max-width: 560px) {
-  .club-header {
-    flex-direction: column;
-    align-items: center;
-    text-align: center;
-  }
 
-  .club-logo {
-    margin-top: 1rem;
-  }
-
-  .club-logo img {
-    width: 120px;
-    height: auto;
-  }
 }
 .no-favorite-msg {
   text-align: center;
