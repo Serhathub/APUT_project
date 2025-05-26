@@ -139,9 +139,14 @@
     <p><strong><%= league.name %> - <%= league.area.name %></strong></p>
     <p>Aantal clubs: <%= clubs.length %></p>
     <p>Aantal blacklisted clubs: <%= blacklistedClubsInSpecificLeague.length %></p>
+    <form action="/api/favorieteleagues/delete" method="POST">
+      <button type="submit" class="btn btn-danger">
+        Verwijder deze league
+      </button>
+    </form>
     <% if (clubs.length > 0) { %>
   <form method="GET" action="/favorieteleagues" class="text-center">
-    <select name="clubId" class="form-select w-100 mx-auto mb-3" onchange="this.form.submit()">
+    <select name="clubId" class="form-select w-100 mx-auto" onchange="this.form.submit()">
       <option disabled selected>Clubs...</option>
       <% clubs.forEach(club => { %>
         <option value="<%= club.id %>"><%= club.name %></option>
@@ -150,12 +155,12 @@
   </form>
 <% if (selectedClub) { %>
   <div class="container mt-4">
-    <div class="row align-items-center justify-content-center bg-light p-3 rounded shadow">
+    <div id="selectedClub-info" class="row align-items-center justify-content-center bg-dark p-3 rounded shadow">
       <div class="col-md-6 text-start">
-        <h5 class="mb-2">Geselecteerde club:</h5>
-        <p class="fw-bold"><%= selectedClub.name %></p>
-        <p class="mb-1"><strong>Oprichtingsjaar:</strong> <%= selectedClub.founded %></p>
-      <p class="mb-1"><strong>Stadion:</strong> <%= selectedClub.venue %></p>
+        <h5 class="mb-1 text-white">Geselecteerde club:</h5>
+        <p class="fw-bold text-white"><%= selectedClub.name %></p>
+        <p class="mb-1 text-white"><strong>Oprichtingsjaar:</strong> <%= selectedClub.founded %></p>
+      <p class="mb-1 text-white"><strong>Stadion:</strong> <%= selectedClub.venue %></p>
         <form id="favoriteForm" class="d-inline" method="POST" action="/api/favorites">
           <input type="hidden" name="clubId" value="<%= selectedClub.id %>" />
           <button type="submit" class="btn btn-outline-success">Toevoegen aan favorieten</button>

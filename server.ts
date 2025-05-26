@@ -692,6 +692,18 @@ app.post("/api/blacklist/delete/:clubId", requireLogin, async (req, res) => {
 
   res.redirect("/blacklistedPage");
 });
+app.post("/api/favorieteleagues/delete", requireLogin, async (req, res) => {
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId);
+
+  await usersCol.updateOne(
+    { _id },
+    { $unset: { favoriteLeague: "" } }
+  );
+
+  res.redirect("/favorieteleagues");
+});
+
 app.post("/api/favorites/delete/:clubId", requireLogin, async (req, res) => {
   const clubId = Number(req.params.clubId);
 
