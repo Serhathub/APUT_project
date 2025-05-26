@@ -20,6 +20,7 @@ export interface User {
   favorites: FavoriteClub[];
   blacklistedClubs: BlacklistedClub[];
   favoriteLeague: Number;
+  highscore?: number;
 }
 
 export interface Coach {
