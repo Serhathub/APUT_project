@@ -13,7 +13,6 @@ body::before {
 .league {
   margin: 0 auto;
   max-width: 90%;
-  margin-bottom: 20px;
 }
 h1 {
   background-color: #07f468;
@@ -86,14 +85,6 @@ label {
   background-color: #c82333;
 }
 
-.leaguesContainer {
-  margin: 3rem auto;
-  max-width: 800px;
-  padding: 20px;
-  background-color: rgba(255, 255, 255, 0.9);
-  border-radius: 12px;
-}
-
 .league {
   border: 2px solid #07f468;
   border-radius: 12px;
@@ -129,11 +120,6 @@ label {
   font-weight: bold;
 }
 
-.heart-container {
-  display: inline-block;
-  margin-left: 10px;
-  cursor: pointer;
-}
 
 .list-button,
 .remove-button {
@@ -163,16 +149,27 @@ label {
 }
 
 @media (max-width: 768px) {
-  .leaguesContainer {
-    margin: 1rem;
-    padding: 15px;
-  }
-
   .league img {
     width: 70px;
   }
-
-  h1, h2 {
-    font-size: 1.2rem;
+.league  {
+    margin-bottom: 20px;
   }
+  h1, h2 {
+    font-size: 1.7rem;
+  }
+  #selectedClub-info .col-md-6 {
+    text-align: center !important;
+  }
+
+  #selectedClub-info img {
+    display: block;
+    margin-top: 10px;
+    margin-left: auto;
+    margin-right: auto;
+    width: 90px;
+  }
+.league-icons img{
+  width: 80px;
+}
 }
