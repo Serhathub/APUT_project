@@ -112,9 +112,8 @@
       </div>
     </h1>
 
-<h2 class="text-center"><%= league ? league.name : "Geen favoriete league geselecteerd" %></h2>
-
 <% if (!league) { %>
+<h2 class="alert alert-danger text-center">"Geen favoriete league geselecteerd"</h2>
   <h2 class="text-center my-4">Selecteer je favoriete league</h2>
   <form action="/favorieteleagues" method="POST" class="text-center">
     <select name="leagueId" class="form-select w-50 mx-auto mb-3" required>
@@ -125,19 +124,53 @@
     </select>
     <button type="submit" class="btn btn-success">Opslaan als favoriet</button>
   </form>
+  <h2 class="text-center my-4">Of je kan de quiz opnieuw spelen om een favoriete league daaruit te kiezen</h2>
+  <div class="text-center my-4">
+  <form action="/Quiz-Page" method="GET">
+    <button type="submit" class="btn btn-warning">Speel de quiz!</button>
+  </form>
+</div>
 <% } else { %>
-  <h2 class="text-center my-4"><%= league.name %> - <%= league.area.name %></h2>
   <div class="league text-center">
-    <img src="<%= league.emblem %>" alt="<%= league.name %> logo" class="mb-3" width="100">
-    <p>Land: <%= league.area.name %></p>
+    <div class="league-icons">
+      <img src="<%= league.emblem %>" />
+      <img src="<%= league.area.flag %>" />
+    </div>
+    <p><strong><%= league.name %> - <%= league.area.name %></strong></p>
     <p>Aantal clubs: <%= clubs.length %></p>
-
-    <select class="clubsDropdown form-select w-50 mx-auto mb-3">
-      <option selected disabled>Clubs...</option>
+    <p>Aantal blacklisted clubs: <%= blacklistedClubsInSpecificLeague.length %></p>
+    <% if (clubs.length > 0) { %>
+  <form method="GET" action="/favorieteleagues" class="text-center">
+    <select name="clubId" class="form-select w-100 mx-auto mb-3" onchange="this.form.submit()">
+      <option disabled selected>Clubs...</option>
       <% clubs.forEach(club => { %>
         <option value="<%= club.id %>"><%= club.name %></option>
       <% }) %>
     </select>
+  </form>
+<% if (selectedClub) { %>
+  <div class="container mt-4">
+    <div class="row align-items-center justify-content-center bg-light p-3 rounded shadow">
+      <div class="col-md-6 text-start">
+        <h5 class="mb-2">Geselecteerde club:</h5>
+        <p class="fw-bold"><%= selectedClub.name %></p>
+        <p class="mb-1"><strong>Oprichtingsjaar:</strong> <%= selectedClub.founded %></p>
+      <p class="mb-1"><strong>Stadion:</strong> <%= selectedClub.venue %></p>
+        <form id="favoriteForm" class="d-inline" method="POST" action="/api/favorites">
+          <input type="hidden" name="clubId" value="<%= selectedClub.id %>" />
+          <button type="submit" class="btn btn-outline-success">Toevoegen aan favorieten</button>
+        </form>
+      </div>
+      <div class="col-md-4 text-center">
+        <img src="<%= selectedClub.crest %>" alt="<%= selectedClub.name %>" class="img-fluid" style="max-height: 100px;" />
+      </div>
+    </div>
+  </div>
+<% } %>
+
+  <div id="clubInfo" class="mt-3"></div>
+<% } %>
+
 
     <div id="clubInfo" class="mt-3"></div>
   </div>

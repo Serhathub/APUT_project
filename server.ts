@@ -254,13 +254,31 @@ if (!user?.favoriteLeague) {
   }
 
   const league = await leaguesCol.findOne({ id: user.favoriteLeague });
-  const clubs = await clubsCol.find({ league: league?.code }).toArray();
+  const blacklistedIds = user.blacklistedClubs?.map(b => b.clubId) || [];
+  const clubs = await clubsCol.find({ league: league?.code, id: { $nin: blacklistedIds } }).toArray();
+  const selectedClubId = Number(req.query.clubId);
+  let selectedClub = null;
 
+  if (req.query.selectedClubId) {
+  const selectedId = Number(req.query.selectedClubId);
+  if (!isNaN(selectedId)) {
+    selectedClub = await clubsCol.findOne({ id: selectedId });
+  }
+}
+  if (!isNaN(selectedClubId)) {
+    selectedClub = await clubsCol.findOne({ id: selectedClubId });
+  }
+  const blacklistedClubsInSpecificLeague = await clubsCol.find({
+    id: { $in: blacklistedIds },
+    league: league?.code
+  }).toArray();
   res.render("favorieteleagues", {
     pageTitle: "Favoriete League",
     league,
     clubs,
-    leagues: []
+    leagues: [],
+    blacklistedClubsInSpecificLeague,
+    selectedClub
   });
 });
 app.get("/blacklistedPage", requireLogin, async (req, res) => {

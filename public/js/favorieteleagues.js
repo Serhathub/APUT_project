@@ -1,68 +1,31 @@
-const removeButtons = document.querySelectorAll(".remove-button");
-const container = document.querySelector(".leaguesContainer");
-const dropdowns = document.querySelectorAll("select");
+document.addEventListener("DOMContentLoaded", () => {
+  const form = document.getElementById("favoriteForm");
+  if (!form) return;
 
-const messageDiv = document.createElement("div");
-messageDiv.classList.add("message");
-messageDiv.textContent = "Je hebt geen favoriete league, speel eerst de quiz!";
-container.appendChild(messageDiv);
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-function checkEmpty() {
-  if (container.children.length === 1) {
-    messageDiv.style.display = "block";
-  }
-}
+    const formData = new FormData(form);
+    const clubId = formData.get("clubId");
 
-dropdowns.forEach((dropdown) => {
-  dropdown.addEventListener("change", function () {
-    const selectedValue = dropdown.options[dropdown.selectedIndex].text;
-
-    const infoDiv = dropdown.closest(".league").querySelector(".info");
-
-    console.log(selectedValue);
-
-    if (selectedValue == "Clubs...") {
-      infoDiv.textContent = ``;
-    } else {
-      infoDiv.textContent = `${selectedValue} (Extra informatie...)`;
-
-      const heartContainer = document.createElement("span");
-      heartContainer.classList.add("heart-container");
-      heartContainer.innerHTML = `
-      <span class="heart">&#9825;</span> <!-- Heart icon (empty initially) -->
-    `;
-
-      const existingHeart = infoDiv.querySelector(".heart-container");
-      if (!existingHeart) {
-        infoDiv.appendChild(heartContainer);
-      }
-
-      const heart = heartContainer.querySelector(".heart");
-      heart.addEventListener("click", function () {
-        heart.classList.toggle("liked");
-        if (heart.classList.contains("liked")) {
-          heart.innerHTML = "&#10084;";
-        } else {
-          heart.innerHTML = "&#9825;";
-        }
+    try {
+      const res = await fetch("/api/favorites", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ clubId })
       });
+
+      const result = await res.json();
+      if (!res.ok) throw new Error(result.error || "Fout");
+
+      alert(result.message || "Club toegevoegd aan favorieten.");
+      window.location.href = "/favorieteleagues";
+    } catch (err) {
+      alert(err.message || "Er is iets misgegaan.");
+      window.location.href = "/favorieteleagues";
     }
   });
 });
-
-removeButtons.forEach((button) => {
-  button.addEventListener("click", function () {
-    const parentDiv = button.parentElement;
-    parentDiv.remove();
-
-    checkEmpty();
-  });
-});
-    document.querySelector('.clubsDropdown').addEventListener('change', function () {
-      const selectedOption = this.options[this.selectedIndex];
-      const infoDiv = document.getElementById('clubInfo');
-      infoDiv.innerHTML = "<strong>Geselecteerde club:</strong> " + selectedOption.text;
-    });
 const editProfileBtn = document.getElementById("editProfileBtn");
 const saveProfileBtn = document.getElementById("saveProfileBtn");
 const cancelProfileBtn = document.getElementById("cancelProfileBtn");

@@ -63,6 +63,7 @@ export interface League {
   area: {
     name: string;
     code: string;
+    flag: string;
   };
   name: string;
   code: string;
