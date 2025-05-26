@@ -5,25 +5,56 @@ body::before {
   left: -20px;
   right: -20px;
   bottom: -20px;
-  background: url("./assets/fifaAchtergrond.png") no-repeat center center;
+  background: url("/Assets/fifaAchtergrond.png") no-repeat center center;
   background-size: cover;
   filter: blur(5px);
   z-index: -1;
 }
-
+.league {
+  margin: 0 auto;
+  max-width: 90%;
+  margin-bottom: 20px;
+}
 h1 {
   background-color: #07f468;
   color: black;
   padding: 10px 20px;
   font-weight: bold;
   border-radius: 5px;
+  text-align: center;
+}
+h2 {
+  color: #fff;
+  background-color: rgba(0, 0, 0, 0.6);
+  padding: 10px 20px;
+  border-radius: 10px;
 }
 
+select.form-select {
+  max-width: 400px;
+  margin: 10px auto;
+}
 label {
   font-size: 1rem;
 }
+.user-icon-btn {
+  font-size: 2rem;
+  border: none;
+  background: none;
+  color: #000;
+}
+.dropdown{
+    position: absolute;
+    right: 0px; 
+    top: 0px;
+    width: 70px;
+    height: 70px; 
+    cursor: pointer; 
+}
 
-
+.dropdown-toggle::after {
+  display: none;
+}
 .modal-body input[readonly] {
   background-color: #e9e9e9 !important;
   border: 1px solid #ccc;
@@ -56,43 +87,46 @@ label {
 }
 
 .leaguesContainer {
-  margin: 5rem;
+  margin: 3rem auto;
+  max-width: 800px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.9);
+  border-radius: 12px;
 }
 
 .league {
-  border: 2px solid green;
-  border-radius: 8px;
-  padding: 15px;
-  margin: 10px 0;
+  border: 2px solid #07f468;
+  border-radius: 12px;
+  padding: 20px;
   background-color: #07f468;
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
   align-items: center;
-  justify-content: space-between;
-  border: 1px solid black;
+  text-align: center;
 }
 
-.league img {
-  width: 90px;
+.league-icons img{
+  width: 120px;
   height: auto;
-  margin-right: 10px;
+  margin: 0 10px;
 }
-
 .message {
-  font-size: 18px;
+  font-size: 1rem;
   color: #333;
   text-align: center;
-  padding: 20px;
+  padding: 15px;
   background-color: #ffcc00;
   border-radius: 8px;
   display: none;
+  margin-top: 10px;
 }
 
 .info {
-  width: 100%;
-  background-color: rgb(84, 255, 72);
-  padding: 5px;
-  margin-top: 10px;
+  background-color: #b6ffbd;
+  padding: 10px;
+  margin-top: 15px;
+  border-radius: 8px;
+  font-weight: bold;
 }
 
 .heart-container {
@@ -101,18 +135,9 @@ label {
   cursor: pointer;
 }
 
-.heart {
-  font-size: 24px;
-  color: #f44336;
-}
-
-.heart.liked {
-  color: #ff4081;
-}
-
 .list-button,
 .remove-button {
-  padding: 5px 10px;
+  padding: 6px 12px;
   border: none;
   border-radius: 5px;
   cursor: pointer;
@@ -124,7 +149,7 @@ label {
 }
 
 .remove-button {
-  background-color: red;
+  background-color: #dc3545;
   color: #fff;
 }
 
@@ -132,20 +157,22 @@ label {
   width: 70px;
   height: 70px;
 }
+
 .profile-icon:hover {
-  opacity: 0.61;
-}
-.dropdown {
-  position: absolute;
-  right: 0px;
-  top: 0px;
-  width: 70px;
-  height: 70px;
-  cursor: pointer;
+  opacity: 0.7;
 }
 
 @media (max-width: 768px) {
   .leaguesContainer {
-    margin: 2rem;
+    margin: 1rem;
+    padding: 15px;
+  }
+
+  .league img {
+    width: 70px;
+  }
+
+  h1, h2 {
+    font-size: 1.2rem;
   }
 }

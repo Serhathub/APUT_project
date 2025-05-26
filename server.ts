@@ -281,8 +281,52 @@ app.get("/favorieten/club/:id", requireLogin, async (req, res) => {
 });
 
 
-app.get('/favorieteleagues', (req, res) => {
-  res.render('favorieteleagues', { pageTitle: 'FavorieteLeague' });
+
+app.get("/favorieteleagues", requireLogin, async (req, res) => {
+  const usersCol = database.collection<User>("users");
+  const leaguesCol = database.collection<League>("leagues");
+  const clubsCol = database.collection<Club>("teams");
+  const _id = new ObjectId(req.session.userId);
+  
+  const user = await usersCol.findOne({ _id });
+
+if (!user?.favoriteLeague) {
+    const leagues = await leaguesCol.find().toArray();
+    return res.render('favorieteleagues', {
+      pageTitle: 'Favoriete League',
+      league: null,
+      clubs: [],
+      leagues 
+    });
+  }
+
+  const league = await leaguesCol.findOne({ id: user.favoriteLeague });
+  const blacklistedIds = user.blacklistedClubs?.map(b => b.clubId) || [];
+  const clubs = await clubsCol.find({ league: league?.code, id: { $nin: blacklistedIds } }).toArray();
+  const selectedClubId = Number(req.query.clubId);
+  let selectedClub = null;
+
+  if (req.query.selectedClubId) {
+  const selectedId = Number(req.query.selectedClubId);
+  if (!isNaN(selectedId)) {
+    selectedClub = await clubsCol.findOne({ id: selectedId });
+  }
+}
+  if (!isNaN(selectedClubId)) {
+    selectedClub = await clubsCol.findOne({ id: selectedClubId });
+  }
+  const blacklistedClubsInSpecificLeague = await clubsCol.find({
+    id: { $in: blacklistedIds },
+    league: league?.code
+  }).toArray();
+  res.render("favorieteleagues", {
+    pageTitle: "Favoriete League",
+    league,
+    clubs,
+    leagues: [],
+    blacklistedClubsInSpecificLeague,
+    selectedClub
+  });
 });
 app.get("/blacklistedPage", requireLogin, async (req, res) => {
   const usersCol = database.collection<User>("users");
@@ -666,6 +710,25 @@ app.post("/api/favorites/delete/:clubId", requireLogin, async (req, res) => {
 
   res.redirect("/favorieten");
 });
+app.post("/favorieteleagues", requireLogin, async (req, res) => {
+  const leagueId = Number(req.body.leagueId);
+
+  if (isNaN(leagueId)) {
+     res.status(400).send("Ongeldige leagueId");
+     return;
+  }
+
+  const usersCol = database.collection<User>("users");
+  const _id = new ObjectId(req.session.userId);
+
+  await usersCol.updateOne(
+    { _id },
+    { $set: { favoriteLeague: leagueId } }
+  );
+
+  res.redirect("/favorieteleagues");
+});
+
 
 app.post("/api/highscore", requireLogin, async (req, res) => {
   const { score } = req.body;

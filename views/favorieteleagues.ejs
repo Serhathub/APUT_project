@@ -7,6 +7,7 @@
       href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css"
       rel="stylesheet"
     />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.3/font/bootstrap-icons.css" />
     <link rel="stylesheet" href="css/favorieteleagues.css" />
     <script src="js/favorieteleagues.js" defer></script>
     <title>FavorieteLeague</title>
@@ -14,56 +15,7 @@
   <body>
     <h1 class="text-center mb-4">
       Favoriete League
-      <div class="dropdown">
-        <img
-          src="./assets/profiel_Icon.png"
-          alt="Profiel Icon"
-          class="profile-icon"
-          data-bs-toggle="dropdown"
-          aria-expanded="false"
-        />
-        <ul class="dropdown-menu dropdown-menu-end">
-          <li>
-            <a
-              class="dropdown-item"
-              href="#"
-              data-bs-toggle="modal"
-              data-bs-target="#profileModal"
-              >Profiel</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item" href="Quiz-Page"
-              >Game Pagina</a
-            >
-          </li>
-          <li>
-            <a class="dropdown-item" href="favorieten"
-              >Favoriete Clubs</a
-            >
-          </li>
-          <li>
-            <a
-              class="dropdown-item"
-              href="favorieteleagues"
-              >Favoriete League</a
-            >
-          </li>
-          <li>
-            <a
-              class="dropdown-item"
-              href="blacklistedPage"
-              >Blacklisted Clubs</a
-            >
-          </li>
-          <li><hr class="dropdown-divider" /></li>
-          <li>
-            <a class="dropdown-item" href="login"
-              >Uitloggen</a
-            >
-          </li>
-        </ul>
-      </div>
+<%- include('partials/profileModal') %>
       <div
         class="modal fade"
         id="profileModal"
@@ -160,24 +112,69 @@
       </div>
     </h1>
 
-    <div class="leaguesContainer">
-      <div class="league">
-        <img src="Assets/LaLiga_logo.png" alt="LaLiga Logo" />
-        <p>
-          Naam: LaLiga <br />
-          Land: Spanje <br />
-          Aantal clubs: 20
-        </p>
-        <select class="clubsDropdown1">
-          <option value="lijst clubs">Clubs...</option>
-          <option value="club1">Real Madrid</option>
-          <option value="club2">Club 2</option>
-          <option value="club3">Club 3</option>
-        </select>
-        <button class="remove-button">verwijderen</button>
-        <div class="info"></div>
+<% if (!league) { %>
+<h2 class="alert alert-danger text-center">"Geen favoriete league geselecteerd"</h2>
+  <h2 class="text-center my-4">Selecteer je favoriete league</h2>
+  <form action="/favorieteleagues" method="POST" class="text-center">
+    <select name="leagueId" class="form-select w-50 mx-auto mb-3" required>
+      <option value="">Kies een league</option>
+      <% leagues.forEach(l => { %>
+        <option value="<%= l.id %>"><%= l.name %> (<%= l.area.name %>)</option>
+      <% }) %>
+    </select>
+    <button type="submit" class="btn btn-success">Opslaan als favoriet</button>
+  </form>
+  <h2 class="text-center my-4">Of je kan de quiz opnieuw spelen om een favoriete league daaruit te kiezen</h2>
+  <div class="text-center my-4">
+  <form action="/Quiz-Page" method="GET">
+    <button type="submit" class="btn btn-warning">Speel de quiz!</button>
+  </form>
+</div>
+<% } else { %>
+  <div class="league text-center">
+    <div class="league-icons">
+      <img src="<%= league.emblem %>" />
+      <img src="<%= league.area.flag %>" />
+    </div>
+    <p><strong><%= league.name %> - <%= league.area.name %></strong></p>
+    <p>Aantal clubs: <%= clubs.length %></p>
+    <p>Aantal blacklisted clubs: <%= blacklistedClubsInSpecificLeague.length %></p>
+    <% if (clubs.length > 0) { %>
+  <form method="GET" action="/favorieteleagues" class="text-center">
+    <select name="clubId" class="form-select w-100 mx-auto mb-3" onchange="this.form.submit()">
+      <option disabled selected>Clubs...</option>
+      <% clubs.forEach(club => { %>
+        <option value="<%= club.id %>"><%= club.name %></option>
+      <% }) %>
+    </select>
+  </form>
+<% if (selectedClub) { %>
+  <div class="container mt-4">
+    <div class="row align-items-center justify-content-center bg-light p-3 rounded shadow">
+      <div class="col-md-6 text-start">
+        <h5 class="mb-2">Geselecteerde club:</h5>
+        <p class="fw-bold"><%= selectedClub.name %></p>
+        <p class="mb-1"><strong>Oprichtingsjaar:</strong> <%= selectedClub.founded %></p>
+      <p class="mb-1"><strong>Stadion:</strong> <%= selectedClub.venue %></p>
+        <form id="favoriteForm" class="d-inline" method="POST" action="/api/favorites">
+          <input type="hidden" name="clubId" value="<%= selectedClub.id %>" />
+          <button type="submit" class="btn btn-outline-success">Toevoegen aan favorieten</button>
+        </form>
+      </div>
+      <div class="col-md-4 text-center">
+        <img src="<%= selectedClub.crest %>" alt="<%= selectedClub.name %>" class="img-fluid" style="max-height: 100px;" />
       </div>
     </div>
+  </div>
+<% } %>
+
+  <div id="clubInfo" class="mt-3"></div>
+<% } %>
+
+
+    <div id="clubInfo" class="mt-3"></div>
+  </div>
+<% } %>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
   </body>
