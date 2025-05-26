@@ -24,11 +24,6 @@ body::before {
   background-color: #07F468;
 }
 
-.placeholder {
-  width: 30px;
-  background-color: #07F468;
-}
-
 .navbar-brand-custom {
   color: #000;
   font-weight: bold;
@@ -110,9 +105,24 @@ body::before {
     background-color:#06c15e ;
 }
 
+.login-text {
+  font-size: 1.1rem;
+}
+
+.login-link {
+  color: #07F468;
+  font-weight: bold;
+  text-decoration: none;
+}
+
+.login-link:hover {
+  color: #06c15e;
+  text-decoration: underline;
+}
+
 @media (max-width: 768px) {
   .registration-box {
-    font-size: 1.3rem;
+    font-size: 1.2rem;
     width: 95%;
     padding: 20px;
   }

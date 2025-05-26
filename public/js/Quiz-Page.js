@@ -1,7 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
-  // ——————————————————————
-  // Quiz logic
-  // ——————————————————————
+
   const quizBox          = document.getElementById("quiz-box");
   const startScreen      = document.getElementById("start-screen");
   const questionScreen   = document.getElementById("question-screen");
@@ -32,27 +30,22 @@ document.addEventListener("DOMContentLoaded", () => {
       highscoreEl.textContent = highscore;
     });
 
-  // fetch data
   Promise.all([
     fetch("/api/quiz/clubs").then(r => r.json()),
     fetch("/api/quiz/leagues").then(r => r.json())
   ]).then(([c, l]) => { clubs = c; leagues = l; });
 
-  // hide thumbs initially
   thumbsUpBtn.style.display = thumbsDownBtn.style.display = "none";
 
-  // helper: show popup message
   function showPopup(message, type = 'success') {
     const popup = document.createElement('div');
     popup.className = `alert alert-${type} position-absolute start-50 translate-middle-x`;
-    popup.style.bottom = '100%';
-    popup.style.marginBottom = '-170px';
+    popup.classList.add('quiz-popup');
     popup.textContent = message;
     quizBox.appendChild(popup);
     setTimeout(() => popup.remove(), 5000);
   }
 
-  // START QUIZ
   document.getElementById("start-btn").addEventListener("click", () => {
     score = 0;
     currentType = "club";
@@ -62,26 +55,21 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   function nextQuestion() {
-    // reset UI
     questionScreen.classList.remove("d-none");
     thumbsUpBtn.style.display = thumbsDownBtn.style.display = "none";
     reasonInput.value = "";
 
-    // choose 4 random
     const pool = shuffle(currentType === "club" ? clubs : leagues).slice(0,4);
     const choice = pool[Math.floor(Math.random() * pool.length)];
     correctId = choice.id;
 
-    // show badge
     badgeImg.src = choice.crest || choice.emblem;
     badgeImg.alt = choice.name;
-    badgeImg.style.cursor = "pointer";
 
-    // render options
     optionsContainer.innerHTML = "";
     pool.forEach(opt => {
       const btn = document.createElement("button");
-      btn.className = "btn btn-outline-primary w-100 option-btn";
+      btn.className = "w-100 option-btn";
       btn.textContent = opt.name;
       btn.dataset.id = opt.id;
       btn.disabled = false;
@@ -92,7 +80,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // option clicked
   optionsContainer.addEventListener("click", e => {
     if (!e.target.matches(".option-btn")) return;
     const picked = Number(e.target.dataset.id);
@@ -107,7 +94,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // badge click: toggle thumbs
   badgeImg.addEventListener("click", () => {
     if (thumbsUpBtn.style.display === "none") {
       thumbsUpBtn.style.display = "inline-block";
@@ -117,7 +103,6 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // thumbs up
   thumbsUpBtn.addEventListener("click", () => {
     if (currentType === "club") {
       fetch("/api/favorites", {
@@ -143,14 +128,12 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // thumbs down (club only)
   thumbsDownBtn.addEventListener("click", () => {
     if (currentType === "club") {
       blacklistModal.show();
     }
   });
 
-  // confirm blacklist
   confirmBlacklist.addEventListener("click", () => {
     fetch("/api/blacklist", {
       method: "POST",
@@ -177,12 +160,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   }
 
-  // save score
   saveScoreBtn.addEventListener("click", () => {
   const name = playerNameInput.value.trim();
   if (!name) return;
 
-  // stuur naar server
   fetch("/api/highscore", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -200,7 +181,6 @@ document.addEventListener("DOMContentLoaded", () => {
     });
 });
 
-  // play again
   playAgainBtn.addEventListener("click", () => {
     score = 0;
     endScreen.classList.add("d-none");
@@ -208,7 +188,6 @@ document.addEventListener("DOMContentLoaded", () => {
     nextQuestion();
   });
 
-  // shuffle helper
   function shuffle(arr) {
     return arr.sort(() => Math.random() - 0.5);
   }

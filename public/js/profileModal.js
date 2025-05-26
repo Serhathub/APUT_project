@@ -11,12 +11,11 @@ document.addEventListener("DOMContentLoaded", () => {
   profileModalEl.addEventListener('show.bs.modal', () => {
   fetch("/api/highscore")
     .then(r => r.json())
-    .then(data => {
-      highscore = data.highscore;
-      highscoreEl.textContent = highscore;
-      profileHighscore.value = highscore;
-    });
-});
+      .then(data => {
+        profileHighscore.value = data.highscore;
+      })
+    .catch(err => console.error("Kon highscore niet ophalen:", err));
+  });
 
   if (usernameInput && emailInput) {
     const origUser  = usernameInput.value;
