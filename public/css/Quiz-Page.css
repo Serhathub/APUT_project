@@ -62,7 +62,7 @@ body::before {
 
 .badge-img {
   max-height: 250px;
-  width: auto;
+  width: 250px;
   cursor: pointer;
 }
 

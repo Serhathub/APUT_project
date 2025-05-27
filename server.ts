@@ -2,23 +2,31 @@ import express from "express";
 import ejs from "ejs";
 import path from "path";
 import { MongoClient, Db, Collection, ObjectId } from "mongodb";
+import connectMongoDBSession from "connect-mongodb-session";
 import bcrypt from "bcrypt";
 import { error } from "console";
 import session from 'express-session';
 import 'express-session';
 import { User, Club, FavoriteClub, BlacklistedClub, Player, Coach, Area, League } from "./types";
+import dotenv from "dotenv";
 
+dotenv.config();
 declare module 'express-session' {
   interface SessionData {
     userId?: string;
   }
 }
+const MongoDBStore = connectMongoDBSession(session);
 
+const store = new MongoDBStore({
+  uri: process.env.MONGO_URI!,
+  collection: "sessions",
+  databaseName: "APUTproject-database",
+});
 const app = express();
-const PORT = 3000;
-const uri = "mongodb+srv://serhatkaya:j5j7JmHajuG4su9l@aputprojectdb.08sfsel.mongodb.net/?retryWrites=true&w=majority&appName=APUTprojectDB";
-const client = new MongoClient(uri);
-const api_token = "760b74ad2ee74c15ade7495760546921";
+const PORT = process.env.PORT || 3000;
+const client = new MongoClient(process.env.MONGO_URI!);
+const api_token = process.env.API_TOKEN!;
 let database: Db;
 
 app.set("view engine", "ejs");
@@ -109,9 +117,10 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 app.use(session({
-  secret: "eenSuperGeheimeCodeVoorNu",
+  secret: process.env.SESSION_SECRET || "eenSuperGeheimeCodeVoorNu",
   resave: false,
   saveUninitialized: false,
+  store,
   cookie: {
     maxAge: 1000 * 60 * 60 * 24 * 7,
     secure: false,
